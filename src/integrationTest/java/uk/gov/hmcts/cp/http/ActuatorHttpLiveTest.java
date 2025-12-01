@@ -12,6 +12,11 @@ public class ActuatorHttpLiveTest {
     private final RestTemplate http = new RestTemplate();
 
     @Test
+    void actuator_info_should_display_correct_fields(){
+
+    }
+
+    @Test
     void health_is_up() {
         final ResponseEntity<String> res = http.exchange(
                 baseUrl + "/actuator/health", HttpMethod.GET,
