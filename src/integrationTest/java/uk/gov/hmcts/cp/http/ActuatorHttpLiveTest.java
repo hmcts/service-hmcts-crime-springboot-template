@@ -6,15 +6,10 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ActuatorHttpLiveTest {
+class ActuatorHttpLiveTest {
 
     private final String baseUrl = System.getProperty("app.baseUrl", "http://localhost:8082");
     private final RestTemplate http = new RestTemplate();
-
-    @Test
-    void actuator_info_should_display_correct_fields(){
-
-    }
 
     @Test
     void health_is_up() {

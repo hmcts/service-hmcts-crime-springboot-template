@@ -1,6 +1,7 @@
 package uk.gov.hmcts.cp.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ExampleService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExampleService.class);
@@ -25,7 +27,7 @@ public class ExampleService {
         }
         LOG.atWarn().log("NOTE: System configured to return stubbed Court Schedule details. Ignoring provided caseUrn : {}", caseUrn);
         final CourtScheduleResponse stubbedCourtScheduleResponse = exampleRepository.getCourtScheduleByCaseUrn(caseUrn);
-        LOG.atDebug().log("Court Schedule response: {}", stubbedCourtScheduleResponse);
+        log.debug("Court Schedule response: {}", stubbedCourtScheduleResponse);
         return stubbedCourtScheduleResponse;
     }
 

@@ -23,6 +23,7 @@ apply {
   from("$rootDir/gradle/test.gradle")
   from("$rootDir/gradle/jar.gradle")
   from("$rootDir/gradle/integration.gradle")
+  from("$rootDir/gradle/docker.gradle")
 }
 
 sourceSets {
