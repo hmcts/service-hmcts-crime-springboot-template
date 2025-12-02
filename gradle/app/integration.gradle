@@ -1,0 +1,14 @@
+dependencies {
+// integrationTestImplementation dependencies are need as they aren't always propagate as expected,
+// especially with platform BOMs, test runtime dependencies, or custom tasks. Explicit dependencies eliminate that risk.
+  integrationTestImplementation platform('org.junit:junit-bom:5.13.4')
+  integrationTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+  integrationTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  integrationTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  integrationTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+}
