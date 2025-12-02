@@ -1,4 +1,4 @@
-package uk.gov.hmcts.cp.controllers;
+package uk.gov.hmcts.cp.integration;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.cp.controllers;
+package uk.gov.hmcts.cp.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
