@@ -1,6 +1,10 @@
 package uk.gov.hmcts.cp.filters.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -22,7 +26,7 @@ public class JWTService {
     private static final String SCOPE = "scope";
     private final String secretKey;
 
-    public JWTService(@Value("${jwt.secretKey}") final String secretKey){
+    public JWTService(@Value("${jwt.secretKey}") final String secretKey) {
         this.secretKey = secretKey;
     }
 
@@ -37,23 +41,20 @@ public class JWTService {
             final String scope = claims.get(SCOPE).toString();
             return new AuthDetails(userName, scope);
         } catch (SignatureException ex) {
-            log.atError().log("Invalid signature/claims", ex);
+            log.error("Invalid signature/claims", ex);
             throw new InvalidJWTException("Invalid signature:" + ex.getMessage());
         } catch (ExpiredJwtException ex) {
-            log.atError().log("Expired tokens", ex);
+            log.error("Expired tokens", ex);
             throw new InvalidJWTException("Expired tokens:" + ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            log.atError().log("Unsupported token", ex);
+            log.error("Unsupported token", ex);
             throw new InvalidJWTException("Unsupported token:" + ex.getMessage());
         } catch (MalformedJwtException ex) {
-            log.atError().log("Malformed token", ex);
+            log.error("Malformed token", ex);
             throw new InvalidJWTException("Malformed token:" + ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            log.atError().log("JWT token is empty", ex);
+            log.error("JWT token is empty", ex);
             throw new InvalidJWTException("JWT token is empty:" + ex.getMessage());
-        } catch (Exception ex) {
-            log.atError().log("Could not verify JWT token integrity", ex);
-            throw new InvalidJWTException("Could not validate JWT:" + ex.getMessage());
         }
     }
 

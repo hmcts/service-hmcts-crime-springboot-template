@@ -42,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
         final String jwt = request.getHeader(JWT_TOKEN_HEADER);
 
         if (jwt == null) {
-            log.atError().log("JWTFilter expected header {} not passed", JWT_TOKEN_HEADER);
+            log.error("JWTFilter expected header {} not passed", JWT_TOKEN_HEADER);
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "No jwt token passed");
         }
 
@@ -53,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
             requestScopedToken.setUserName(extractedToken.getUserName());
             requestScopedToken.setScope(extractedToken.getScope());
         } catch (InvalidJWTException e) {
-            log.atError().log(e.getMessage());
+            log.error(e.getMessage());
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         filterChain.doFilter(request, response);
