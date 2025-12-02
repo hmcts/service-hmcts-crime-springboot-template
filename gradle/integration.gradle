@@ -18,3 +18,33 @@ tasks.register('integration', Test) {
     showStandardStreams = true
   }
 }
+
+tasks.named('check') {
+  dependsOn tasks.named('integration')
+}
+
+tasks.named('build') {
+  dependsOn tasks.named('test')
+  dependsOn tasks.named('integration')
+}
+
+sourceSets {
+  integrationTest {
+    java {
+      compileClasspath += sourceSets.main.output
+      runtimeClasspath += sourceSets.main.output
+
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+configurations {
+  integrationTestImplementation.extendsFrom testImplementation
+  integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+
+  // Ensure testRuntimeClasspath can be resolved for agent injection
+  testRuntimeClasspath {
+    canBeResolved = true
+  }
+}

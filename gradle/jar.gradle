@@ -23,3 +23,12 @@ bootJar {
     attributes('Implementation-Version': project.version.toString())
   }
 }
+
+tasks.named('composeBuild') {
+  dependsOn tasks.named('bootJar')
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = false
+  reproducibleFileOrder = true
+}
