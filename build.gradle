@@ -21,14 +21,13 @@ apply {
   from("$rootDir/gradle/github/pmd.gradle")
   from("$rootDir/gradle/github/test.gradle")
   from("$rootDir/gradle/github/jar.gradle")
-  from("$rootDir/gradle/github/integration.gradle")
   from("$rootDir/gradle/github/docker.gradle")
 
   from("$rootDir/gradle/app/logging.gradle")
   from("$rootDir/gradle/app/buildinfo.gradle")
   from("$rootDir/gradle/app/spring-core.gradle")
   from("$rootDir/gradle/app/spring-db.gradle")
-  from("$rootDir/gradle/app/integration.gradle")
+  from("$rootDir/gradle/app/apitest.gradle")
 }
 
 dependencies {
