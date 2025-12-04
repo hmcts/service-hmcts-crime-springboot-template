@@ -51,8 +51,8 @@ gradle build
 `build` will run all tests.
 
 ### Tests
-- `gradle test` for running unit tests
-- `gradle integration` for running integration tests
+- `gradle test` for running unit and integration tests
+- `gradle api` for running api tests
 
 
 ### Environment Setup for Local Builds
@@ -67,8 +67,8 @@ This project uses a two-file approach for environment variable management with `
 
 **Server Port:** The application uses port `8082` by default. Override with:
 - Environment variable: `export SERVER_PORT=8080`
-- Gradle property: `./gradlew integration -Pserver.port=8080`
-- System property: `./gradlew integration -Dserver.port=8080`
+- Gradle property: `./gradlew test -Pserver.port=8080`
+- System property: `./gradlew test -Dserver.port=8080`
 
 📖 **For complete setup instructions, troubleshooting, and best practices, see the [Environment Variables Guide](docs/EnvironmentVariables.md).**
 
@@ -92,24 +92,6 @@ Run PMD from Gradle
 
 ```
 gradle pmdTest
-```
-
-## Pact Provider Test
-
-Run pact provider test and publish verification report to pact broker locally
-
-Update .env file with below details (replacing placeholders with actual values):
-```bash
-export PACT_PROVIDER_VERSION="0.1.0-local-YOUR-INITIALS" # or any version you want to use
-export PACT_VERIFIER_PUBLISH_RESULTS=true
-export PACT_PROVIDER_BRANCH="ANY_BRANCH_NAME_THAT_IS_NOT_A_DEFAULT_ONE"
-export PACT_BROKER_TOKEN="YOUR_PACTFLOW_BROKER_TOKEN"
-export PACT_BROKER_URL="https://hmcts-dts.pactflow.io"
-export PACT_ENV="local" # or value based on the environment you are testing against
-```
-Run Pact tests:
-```bash
-./gradlew pactVerificationTest
 ```
 
 ### Contribute to This Repository
