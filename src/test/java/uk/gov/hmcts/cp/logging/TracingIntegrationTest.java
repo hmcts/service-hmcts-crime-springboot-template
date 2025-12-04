@@ -8,8 +8,9 @@ import org.junit.jupiter.api.*;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.OpenTelemetryTracingAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Slf4j
 @EnableAutoConfiguration(exclude = {
-        org.springframework.boot.micrometer.tracing.autoconfigure.OpenTelemetryTracingAutoConfiguration.class
+        OpenTelemetryTracingAutoConfiguration.class
 })
 @Import(TracingIntegrationTestConfiguration.class)
 @TestPropertySource(properties = {
