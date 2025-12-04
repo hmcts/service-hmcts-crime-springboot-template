@@ -10,7 +10,6 @@ import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 
 @TestConfiguration
-@Import(BaseTestConfiguration.class)
 public class TracingIntegrationTestConfiguration {
     
     @Bean

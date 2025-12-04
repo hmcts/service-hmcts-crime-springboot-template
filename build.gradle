@@ -40,7 +40,8 @@ springBoot {
 }
 
 dependencies {
-  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:1.0.0")
+  implementation(files("../api-hmcts-crime-template/build/libs/api-hmcts-crime-template-0.0.999.jar"))
+  // implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:1.0.0")
   implementation 'io.swagger.core.v3:swagger-core:2.2.36'
   implementation 'javax.xml.bind:jaxb-api:2.3.1'
 

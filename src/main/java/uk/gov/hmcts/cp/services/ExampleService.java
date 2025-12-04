@@ -2,13 +2,10 @@ package uk.gov.hmcts.cp.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import uk.gov.hmcts.cp.openapi.model.CourtScheduleResponse;
+import uk.gov.hmcts.cp.entities.ExampleEntity;
+import uk.gov.hmcts.cp.mappers.ExampleMapper;
+import uk.gov.hmcts.cp.openapi.model.ExampleResponse;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 @Service
@@ -16,19 +13,12 @@ import uk.gov.hmcts.cp.repositories.ExampleRepository;
 @Slf4j
 public class ExampleService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExampleService.class);
-
     private final ExampleRepository exampleRepository;
+    private final ExampleMapper exampleMapper;
 
-    public CourtScheduleResponse getCourtScheduleByCaseUrn(final String caseUrn) throws ResponseStatusException {
-        if (StringUtils.isEmpty(caseUrn)) {
-            LOG.atWarn().log("No case urn provided");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "caseUrn is required");
-        }
-        LOG.atWarn().log("NOTE: System configured to return stubbed Court Schedule details. Ignoring provided caseUrn : {}", caseUrn);
-        final CourtScheduleResponse stubbedCourtScheduleResponse = exampleRepository.getCourtScheduleByCaseUrn(caseUrn);
-        log.debug("Court Schedule response: {}", stubbedCourtScheduleResponse);
-        return stubbedCourtScheduleResponse;
+    public ExampleResponse getExampleById(final long exampleId) {
+        ExampleEntity entity = exampleRepository.getReferenceById(exampleId);
+        return exampleMapper.mapExampleToResponse(entity);
     }
 
 }

@@ -2,9 +2,6 @@ package uk.gov.hmcts.cp.integration;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.cp.NonTracingIntegrationTestSetup;
 
@@ -13,8 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
 class ActuatorIntegrationTest extends NonTracingIntegrationTestSetup {
 
     @Resource
