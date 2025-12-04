@@ -88,7 +88,6 @@ jobs:
   Provider-Deploy:
     needs: [ Artefact-Version, Build ]
     runs-on: ubuntu-latest
-    env:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
