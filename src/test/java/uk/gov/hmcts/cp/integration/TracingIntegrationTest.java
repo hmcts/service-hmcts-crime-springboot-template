@@ -1,23 +1,15 @@
-package uk.gov.hmcts.cp.logging;
+package uk.gov.hmcts.cp.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.OpenTelemetryTracingAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.cp.testconfig.TracingIntegrationTestConfiguration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -27,17 +19,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Slf4j
-@EnableAutoConfiguration(exclude = {
-        OpenTelemetryTracingAutoConfiguration.class
-})
-@Import(TracingIntegrationTestConfiguration.class)
-@TestPropertySource(properties = {
-        "spring.application.name=service-hmcts-springboot-template"
-})
-class TracingIntegrationTest {
+class TracingIntegrationTest extends IntegrationTestBase {
 
     // Constants for tracing field names
     private static final String TRACE_ID_FIELD = "traceId";
@@ -52,9 +34,6 @@ class TracingIntegrationTest {
     @Value("${spring.application.name}")
     private String springApplicationName;
 
-    @Resource
-    private MockMvc mockMvc;
-
     private final PrintStream originalStdOut = System.out;
 
     @BeforeEach
@@ -68,7 +47,6 @@ class TracingIntegrationTest {
     @AfterEach
     public void afterEach() {
         System.setOut(originalStdOut);
-        // Clear MDC after each test
         MDC.clear();
     }
 
@@ -121,7 +99,8 @@ class TracingIntegrationTest {
     private Map<String, Object> findRootControllerLog(final String logOutput) throws Exception {
         final String[] logLines = logOutput.split("\n");
         final ObjectMapper objectMapper = new ObjectMapper();
-        final TypeReference<Map<String, Object>> typeReference = new TypeReference<>() {};
+        final TypeReference<Map<String, Object>> typeReference = new TypeReference<>() {
+        };
 
         Map<String, Object> stringObjectMap = null;
         for (final String logLine : logLines) {

@@ -42,21 +42,16 @@ springBoot {
 dependencies {
   implementation(files("../api-hmcts-crime-template/build/libs/api-hmcts-crime-template-0.0.999.jar"))
   // implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:1.0.0")
-  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
-  implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
-  implementation 'io.micrometer:micrometer-registry-prometheus'
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
-  testImplementation 'io.micrometer:micrometer-tracing-test'
-
-  implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.6'
-  implementation 'org.apache.commons:commons-text:1.14.0'
-
-  // Keep only if you actually use JWT primitives yourself (not via Spring Security)
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
-
-
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+  // Should come in with the api
+  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
+
+  testImplementation(platform('org.junit:junit-bom:5.13.4'))
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

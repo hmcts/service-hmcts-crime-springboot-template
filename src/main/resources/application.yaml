@@ -1,15 +1,6 @@
 spring:
   application:
     name: service-UPDATE-TO-BE-NAME-OF-SERVICE
-
-  # Disable SpringDoc auto-configuration
-  autoconfigure:
-    exclude: org.springdoc.core.configuration.SpringDocKotlinConfiguration
-  config:
-    import: "optional:configtree:/mnt/secrets/rpe/"
-  threads:
-    virtual:
-      enabled: ${VIRTUAL_THREADS:false}
   datasource:
     url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
     username: ${APP_NAME_DATASOURCE_USERNAME:postgres}
@@ -61,11 +52,6 @@ management:
       export:
         enabled: ${OTEL_METRICS_ENABLED:false}
         url: ${OTEL_METRICS_URL:http://localhost:4318/metrics}
-
-# Temporarily commented out due to SpringDoc compatibility issues with Spring Boot 4.0.0-M3
-# springdoc:
-#   packagesToScan: uk.gov.hmcts.cp.controllers
-#   writer-with-order-by-keys: true
 
 azure:
   application-insights:

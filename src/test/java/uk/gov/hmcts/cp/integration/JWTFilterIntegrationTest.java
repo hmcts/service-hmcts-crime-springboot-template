@@ -1,13 +1,11 @@
-package uk.gov.hmcts.cp.filters.jwt;
+package uk.gov.hmcts.cp.integration;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.HttpClientErrorException;
-import uk.gov.hmcts.cp.NonTracingIntegrationTestSetup;
+import uk.gov.hmcts.cp.filters.jwt.JWTService;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -15,18 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.cp.filters.jwt.JWTFilter.JWT_TOKEN_HEADER;
 
 @SpringBootTest(properties = {"jwt.filter.enabled=true"})
-@AutoConfigureMockMvc
-class JWTFilterIntegrationTest extends NonTracingIntegrationTestSetup {
-
-    @Resource
-    private MockMvc mockMvc;
+class JWTFilterIntegrationTest extends IntegrationTestBase {
 
     @Resource
     private JWTService jwtService;
 
     @Test
-    @SuppressWarnings("PMD.UnitTestShouldIncludeAssert")
-    void shouldPassWhenTokenIsValid() throws Exception {
+    void filter_should_pass_when_good_token() throws Exception {
         final String jwtToken = jwtService.createToken();
         mockMvc
                 .perform(
@@ -39,7 +32,7 @@ class JWTFilterIntegrationTest extends NonTracingIntegrationTestSetup {
     }
 
     @Test
-    void shouldFailWhenTokenIsMissing() {
+    void filter_should_fail_when_missing_token() {
         assertThatExceptionOfType(HttpClientErrorException.class)
                 .isThrownBy(() -> mockMvc
                         .perform(
