@@ -3,16 +3,16 @@
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <mdc/>
+                <logLevel/>
                 <timestamp>
                     <fieldName>timestamp</fieldName>
                     <pattern>yyyy-MM-dd' 'HH:mm:ss.SSS</pattern>
                 </timestamp>
                 <loggerName/>
                 <threadName/>
-                <logLevel/>
                 <message/>
             </providers>
         </encoder>
     </appender>
-    <root level="DEBUG"><appender-ref ref="JSON"/></root>
+    <root level="INFO"><appender-ref ref="JSON"/></root>
 </configuration>

@@ -9,7 +9,6 @@ def azureADOArtifactToken = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url = "https://repo.spring.io/milestone" }  // required for Boot 4 milestones
   maven {
     url = azureADOArtifactRepository
   }

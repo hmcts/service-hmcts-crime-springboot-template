@@ -1,4 +1,4 @@
-package uk.gov.hmcts.cp.logging;
+package uk.gov.hmcts.cp.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,16 +6,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-import uk.gov.hmcts.cp.NonTracingIntegrationTestSetup;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class SpringLoggingIntegrationTest extends NonTracingIntegrationTestSetup {
+class SpringLoggingIntegrationTest extends IntegrationTestBase {
 
     private final PrintStream originalStdOut = System.out;
 
@@ -35,7 +36,7 @@ class SpringLoggingIntegrationTest extends NonTracingIntegrationTestSetup {
 
         assertThat(capturedFields.get("any-mdc-field")).isEqualTo("1234-1234");
         assertThat(capturedFields.get("timestamp")).isNotNull();
-        assertThat(capturedFields.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.logging.SpringLoggingIntegrationTest");
+        assertThat(capturedFields.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.integration.SpringLoggingIntegrationTest");
         assertThat(capturedFields.get("thread_name")).isEqualTo("Test worker");
         assertThat(capturedFields.get("level")).isEqualTo("INFO");
         assertThat(capturedFields.get("message")).isEqualTo("spring boot test message");
