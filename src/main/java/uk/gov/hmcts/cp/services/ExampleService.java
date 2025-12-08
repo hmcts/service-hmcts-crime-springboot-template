@@ -17,7 +17,7 @@ public class ExampleService {
     private final ExampleMapper exampleMapper;
 
     public ExampleResponse getExampleById(final long exampleId) {
-        ExampleEntity entity = exampleRepository.getReferenceById(exampleId);
+        ExampleEntity entity = exampleRepository.findById(exampleId).orElseThrow();
         return exampleMapper.mapExampleToResponse(entity);
     }
 

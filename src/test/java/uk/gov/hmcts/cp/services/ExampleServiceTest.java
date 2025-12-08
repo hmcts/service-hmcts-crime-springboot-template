@@ -12,6 +12,8 @@ import uk.gov.hmcts.cp.mappers.ExampleMapperImpl;
 import uk.gov.hmcts.cp.openapi.model.ExampleResponse;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +30,7 @@ class ExampleServiceTest {
     @Test
     void service_should_return_mapped_response() {
         ExampleEntity exampleEntity = ExampleEntity.builder().id(123L).exampleText("Text").build();
-        when(exampleRepository.getReferenceById(123L)).thenReturn(exampleEntity);
+        when(exampleRepository.findById(123L)).thenReturn(Optional.ofNullable(exampleEntity));
         ExampleResponse response = exampleService.getExampleById(123L);
         assertThat(response.getExampleId()).isEqualTo(123L);
         assertThat(response.getExampleText()).isEqualTo("Text");

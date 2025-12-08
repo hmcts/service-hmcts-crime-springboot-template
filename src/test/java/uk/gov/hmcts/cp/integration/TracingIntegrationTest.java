@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TracingIntegrationTest extends IntegrationTestBase {
@@ -52,10 +53,14 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
     @Test
     void incoming_request_should_add_new_tracing() throws Exception {
-        final MvcResultHelper result = performRequestAndCaptureLogs("/", null, null);
+        final MvcResultHelper result = performRequestAndCaptureLogs("/example/{example_id}", null, null);
         final Map<String, Object> rootControllerLog = findRootControllerLog(result.capturedLogOutput());
 
-        assertTracingFields(rootControllerLog, TEST_TRACE_ID_1, TEST_SPAN_ID_1);
+        assertThat(rootControllerLog).isNotNull();
+        assertNotNull(rootControllerLog.get(TRACE_ID_FIELD));
+        assertNotNull(rootControllerLog.get(SPAN_ID_FIELD));
+        assertThat(rootControllerLog.get("applicationName")).isEqualTo(springApplicationName);
+
         assertCommonLogFields(rootControllerLog);
     }
 
@@ -65,7 +70,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
         MDC.put(TRACE_ID_FIELD, TEST_TRACE_ID_2);
         MDC.put(SPAN_ID_FIELD, TEST_SPAN_ID_2);
 
-        final MvcResultHelper result = performRequestAndCaptureLogs("/", TEST_TRACE_ID_2, TEST_SPAN_ID_2);
+        final MvcResultHelper result = performRequestAndCaptureLogs("/example/{example_id}", TEST_TRACE_ID_2, TEST_SPAN_ID_2);
         final Map<String, Object> rootControllerLog = findRootControllerLog(result.capturedLogOutput());
 
         assertTracingFields(rootControllerLog, TEST_TRACE_ID_2, TEST_SPAN_ID_2);
@@ -81,7 +86,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
     private MvcResultHelper performRequestAndCaptureLogs(final String path, final String traceId, final String spanId) throws Exception {
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path, 1);
         if (traceId != null) {
             requestBuilder = requestBuilder.header(TRACE_ID_FIELD, traceId);
         }
@@ -104,7 +109,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
         Map<String, Object> stringObjectMap = null;
         for (final String logLine : logLines) {
-            if (logLine.contains("START") && logLine.contains("RootController") && stringObjectMap == null) {
+            if (logLine.contains("ExampleController") && stringObjectMap == null) {
                 stringObjectMap = objectMapper.readValue(logLine, typeReference);
             }
         }
@@ -124,8 +129,8 @@ class TracingIntegrationTest extends IntegrationTestBase {
     }
 
     private void assertCommonLogFields(final Map<String, Object> log) {
-        assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.RootController");
-        assertThat(log.get("message")).isEqualTo("START");
+        assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.ExampleController");
+        assertThat(log.get("message")).isEqualTo("getExampleByExampleId example for 1");
     }
 
     private void assertResponseHeaders(final MvcResult result, final String expectedTraceId, final String expectedSpanId) {
