@@ -15,9 +15,8 @@ public class ExampleController implements ExamplesApi {
 
     private final ExampleService exampleService;
 
-    // TODO - FIx why this not work as expected ???
-    // @Override
-    public ResponseEntity<ExampleResponse> getExampleByExampleId(final long exampleId) {
+    @Override
+    public ResponseEntity<ExampleResponse> getExampleByExampleId(final  Long exampleId) {
         log.info("getExampleByExampleId example for {}", exampleId);
         return ResponseEntity.ok(exampleService.getExampleById(exampleId));
     }

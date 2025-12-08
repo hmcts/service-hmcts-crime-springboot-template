@@ -18,7 +18,7 @@ class ExampleControllerIntegrationTest extends IntegrationTestBase {
     @Test
     void endpoint_should_return_ok() throws Exception {
         ExampleEntity exampleEntity = insertExample("Some random text");
-        mockMvc.perform(get("/example/{example_id}", exampleEntity.getId()))
+        mockMvc.perform(get("/example/{id}", exampleEntity.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
