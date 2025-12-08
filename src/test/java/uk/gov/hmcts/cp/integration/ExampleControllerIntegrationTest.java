@@ -23,7 +23,4 @@ class ExampleControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk());
     }
 
-    private ExampleEntity insertExample(String text) {
-        return exampleRepository.save(ExampleEntity.builder().exampleText(text).build());
-    }
 }
