@@ -50,7 +50,6 @@ jobs:
     outputs:
       repo_name: ${{ steps.repo_vars.outputs.repo_name }}
       artefact_name: ${{ steps.repo_vars.outputs.artefact_name }}
-    env:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -89,7 +88,6 @@ jobs:
   Provider-Deploy:
     needs: [ Artefact-Version, Build ]
     runs-on: ubuntu-latest
-    env:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
