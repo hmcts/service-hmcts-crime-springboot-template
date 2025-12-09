@@ -18,7 +18,7 @@ public class ExampleController implements ExamplesApi {
     private final ExampleService exampleService;
 
     @Override
-    public ResponseEntity<ExampleResponse> getExampleByExampleId(@PathVariable("example_id") @NotNull Long exampleId) {
+    public ResponseEntity<ExampleResponse> getExampleByExampleId(@PathVariable("example_id") @NotNull final Long exampleId) {
 
         log.info("getExampleByExampleId example for {}", exampleId);
         return ResponseEntity.ok(exampleService.getExampleById(exampleId));

@@ -6,9 +6,10 @@ import org.mapstruct.ReportingPolicy;
 import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.openapi.model.ExampleResponse;
 
+@FunctionalInterface
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExampleMapper {
 
     @Mapping(source = "id", target = "exampleId")
-    public abstract ExampleResponse mapExampleToResponse(ExampleEntity exampleEntity);
+    ExampleResponse mapExampleToResponse(ExampleEntity exampleEntity);
 }
