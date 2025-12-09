@@ -6,10 +6,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.hmcts.cp.entities.ExampleEntity;
+import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -37,12 +40,21 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
     private final PrintStream originalStdOut = System.out;
 
+    @Autowired
+    ExampleRepository exampleRepository;
+
+    private ExampleEntity entity;
+
     @BeforeEach
-    public void setUp() {
-        // Manually populate MDC with trace information similar to TracingFilter
+    void setup() {
         MDC.put(TRACE_ID_FIELD, TEST_TRACE_ID_1);
         MDC.put(SPAN_ID_FIELD, TEST_SPAN_ID_1);
         MDC.put("applicationName", springApplicationName);
+        entity = exampleRepository.save(
+                ExampleEntity.builder()
+                        .exampleText("Welcome to service-hmcts-springboot-template")
+                        .build()
+        );
     }
 
     @AfterEach
@@ -86,7 +98,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
     private MvcResultHelper performRequestAndCaptureLogs(final String path, final String traceId, final String spanId) throws Exception {
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path, 1);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path, entity.getId());
         if (traceId != null) {
             requestBuilder = requestBuilder.header(TRACE_ID_FIELD, traceId);
         }
@@ -130,7 +142,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
     private void assertCommonLogFields(final Map<String, Object> log) {
         assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.ExampleController");
-        assertThat(log.get("message")).isEqualTo("getExampleByExampleId example for 1");
+        assertThat(log.get("message")).isEqualTo("getExampleByExampleId example for "+entity.getId());
     }
 
     private void assertResponseHeaders(final MvcResult result, final String expectedTraceId, final String expectedSpanId) {
