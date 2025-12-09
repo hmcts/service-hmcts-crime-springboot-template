@@ -1,23 +1,18 @@
-package uk.gov.hmcts.cp.logging;
+package uk.gov.hmcts.cp.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.OpenTelemetryTracingAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.cp.testconfig.TracingIntegrationTestConfiguration;
+import uk.gov.hmcts.cp.entities.ExampleEntity;
+import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -25,19 +20,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Slf4j
-@EnableAutoConfiguration(exclude = {
-        OpenTelemetryTracingAutoConfiguration.class
-})
-@Import(TracingIntegrationTestConfiguration.class)
-@TestPropertySource(properties = {
-        "spring.application.name=service-hmcts-springboot-template"
-})
-class TracingIntegrationTest {
+class TracingIntegrationTest extends IntegrationTestBase {
 
     // Constants for tracing field names
     private static final String TRACE_ID_FIELD = "traceId";
@@ -52,32 +38,41 @@ class TracingIntegrationTest {
     @Value("${spring.application.name}")
     private String springApplicationName;
 
-    @Resource
-    private MockMvc mockMvc;
-
     private final PrintStream originalStdOut = System.out;
 
+    @Autowired
+    ExampleRepository exampleRepository;
+
+    private ExampleEntity entity;
+
     @BeforeEach
-    public void setUp() {
-        // Manually populate MDC with trace information similar to TracingFilter
+    void setup() {
         MDC.put(TRACE_ID_FIELD, TEST_TRACE_ID_1);
         MDC.put(SPAN_ID_FIELD, TEST_SPAN_ID_1);
         MDC.put("applicationName", springApplicationName);
+        entity = exampleRepository.save(
+                ExampleEntity.builder()
+                        .exampleText("Welcome to service-hmcts-springboot-template")
+                        .build()
+        );
     }
 
     @AfterEach
     public void afterEach() {
         System.setOut(originalStdOut);
-        // Clear MDC after each test
         MDC.clear();
     }
 
     @Test
     void incoming_request_should_add_new_tracing() throws Exception {
-        final MvcResultHelper result = performRequestAndCaptureLogs("/", null, null);
+        final MvcResultHelper result = performRequestAndCaptureLogs("/example/{example_id}", null, null);
         final Map<String, Object> rootControllerLog = findRootControllerLog(result.capturedLogOutput());
 
-        assertTracingFields(rootControllerLog, TEST_TRACE_ID_1, TEST_SPAN_ID_1);
+        assertThat(rootControllerLog).isNotNull();
+        assertNotNull(rootControllerLog.get(TRACE_ID_FIELD));
+        assertNotNull(rootControllerLog.get(SPAN_ID_FIELD));
+        assertThat(rootControllerLog.get("applicationName")).isEqualTo(springApplicationName);
+
         assertCommonLogFields(rootControllerLog);
     }
 
@@ -87,7 +82,7 @@ class TracingIntegrationTest {
         MDC.put(TRACE_ID_FIELD, TEST_TRACE_ID_2);
         MDC.put(SPAN_ID_FIELD, TEST_SPAN_ID_2);
 
-        final MvcResultHelper result = performRequestAndCaptureLogs("/", TEST_TRACE_ID_2, TEST_SPAN_ID_2);
+        final MvcResultHelper result = performRequestAndCaptureLogs("/example/{example_id}", TEST_TRACE_ID_2, TEST_SPAN_ID_2);
         final Map<String, Object> rootControllerLog = findRootControllerLog(result.capturedLogOutput());
 
         assertTracingFields(rootControllerLog, TEST_TRACE_ID_2, TEST_SPAN_ID_2);
@@ -103,7 +98,7 @@ class TracingIntegrationTest {
     private MvcResultHelper performRequestAndCaptureLogs(final String path, final String traceId, final String spanId) throws Exception {
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(path, entity.getId());
         if (traceId != null) {
             requestBuilder = requestBuilder.header(TRACE_ID_FIELD, traceId);
         }
@@ -121,11 +116,12 @@ class TracingIntegrationTest {
     private Map<String, Object> findRootControllerLog(final String logOutput) throws Exception {
         final String[] logLines = logOutput.split("\n");
         final ObjectMapper objectMapper = new ObjectMapper();
-        final TypeReference<Map<String, Object>> typeReference = new TypeReference<>() {};
+        final TypeReference<Map<String, Object>> typeReference = new TypeReference<>() {
+        };
 
         Map<String, Object> stringObjectMap = null;
         for (final String logLine : logLines) {
-            if (logLine.contains("START") && logLine.contains("RootController") && stringObjectMap == null) {
+            if (logLine.contains("ExampleController") && stringObjectMap == null) {
                 stringObjectMap = objectMapper.readValue(logLine, typeReference);
             }
         }
@@ -145,8 +141,8 @@ class TracingIntegrationTest {
     }
 
     private void assertCommonLogFields(final Map<String, Object> log) {
-        assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.RootController");
-        assertThat(log.get("message")).isEqualTo("START");
+        assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.ExampleController");
+        assertThat(log.get("message")).isEqualTo("getExampleByExampleId example for "+entity.getId());
     }
 
     private void assertResponseHeaders(final MvcResult result, final String expectedTraceId, final String expectedSpanId) {

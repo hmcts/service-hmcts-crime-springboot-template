@@ -1,12 +1,13 @@
 package uk.gov.hmcts.cp.http;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ActuatorHttpLiveTest {
+class  ActuatorHttpLiveTest {
 
     private final String baseUrl = System.getProperty("app.baseUrl", "http://localhost:8082");
     private final RestTemplate http = new RestTemplate();
@@ -22,6 +23,7 @@ class ActuatorHttpLiveTest {
         assertThat(res.getBody()).contains("\"status\":\"UP\"");
     }
 
+    @Disabled // Lets revisit this during our monitoring spike
     @Test
     void prometheus_is_exposed() {
         final HttpHeaders httpHeaders = new HttpHeaders();

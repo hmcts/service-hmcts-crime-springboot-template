@@ -1,24 +1,13 @@
 package uk.gov.hmcts.cp.integration;
 
-import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.cp.NonTracingIntegrationTestSetup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
-class ActuatorIntegrationTest extends NonTracingIntegrationTestSetup {
-
-    @Resource
-    private MockMvc mockMvc;
+class ActuatorIntegrationTest extends IntegrationTestBase {
 
     @Test
     void actuator_info_should_have_build_fields() throws Exception {
