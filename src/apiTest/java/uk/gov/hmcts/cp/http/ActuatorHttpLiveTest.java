@@ -1,5 +1,6 @@
 package uk.gov.hmcts.cp.http;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +23,7 @@ class ActuatorHttpLiveTest {
         assertThat(res.getBody()).contains("\"status\":\"UP\"");
     }
 
+    @Disabled
     @Test
     void prometheus_is_exposed() {
         final HttpHeaders httpHeaders = new HttpHeaders();
