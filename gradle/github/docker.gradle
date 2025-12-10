@@ -1,6 +1,6 @@
 dockerCompose {
   useComposeFiles = ['docker/docker-compose.yml']
-  startedServices = ['service-hmcts-marketplace-springboot-template', 'postgres']
+  startedServices = ['app', 'db']
 
   buildBeforeUp = true
   waitForTcpPorts = true
