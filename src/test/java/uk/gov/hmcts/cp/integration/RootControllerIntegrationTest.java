@@ -26,7 +26,7 @@ class RootControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void root_endpoint_should_be_ok() throws Exception {
+    void rootEndpointShouldBeOk() throws Exception {
         mockMvc.perform(get("/example/{example_id}", entity.getId()))
                 .andExpect(status().isOk());
     }

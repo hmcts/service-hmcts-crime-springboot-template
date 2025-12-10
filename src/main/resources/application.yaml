@@ -2,7 +2,7 @@ spring:
   application:
     name: service-UPDATE-TO-BE-NAME-OF-SERVICE
   datasource:
-    url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
+    url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://postgres:5432/postgres}
     username: ${APP_NAME_DATASOURCE_USERNAME:postgres}
     password: ${APP_NAME_DATASOURCE_PASSWORD:postgres}
   jpa:

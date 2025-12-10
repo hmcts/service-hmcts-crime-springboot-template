@@ -11,7 +11,7 @@ class ExampleMapperTest {
     ExampleMapper exampleMapper = new ExampleMapperImpl();
 
     @Test
-    void map_to_response_should_map_all_fields() {
+    void mapToResponseShouldMapAllFields() {
         ExampleEntity exampleEntity = ExampleEntity.builder().id(20L).exampleText("Hello").build();
         ExampleResponse response = exampleMapper.mapExampleToResponse(exampleEntity);
 

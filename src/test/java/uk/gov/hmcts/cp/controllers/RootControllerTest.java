@@ -20,7 +20,7 @@ class RootControllerTest {
     RootController rootController;
 
     @Test
-    void root_controller_should_return_ok() {
+    void rootControllerShouldReturnOk() {
         ResponseEntity<String> response = rootController.getRoot();
         assertThat(response.getStatusCode().value()).isEqualTo(200);
     }
