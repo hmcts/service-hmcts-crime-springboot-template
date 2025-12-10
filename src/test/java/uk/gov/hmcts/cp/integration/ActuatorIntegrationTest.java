@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ActuatorIntegrationTest extends IntegrationTestBase {
 
     @Test
-    void actuatorInfoShouldHaveBuildFields() throws Exception {
+    void actuator_info_should_have_build_fields() throws Exception {
         String name = "service-hmcts-crime-springboot-template";
         mockMvc.perform(get("/actuator/info"))
                 .andDo(print())
@@ -22,7 +22,7 @@ class ActuatorIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void actuatorInfoShouldHaveGorylenkoGitFields() throws Exception {
+    void actuator_info_should_have_gorylenko_git_fields() throws Exception {
         mockMvc.perform(get("/actuator/info"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -32,7 +32,7 @@ class ActuatorIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void actuatorHealthShouldHaveCorrectFields() throws Exception {
+    void actuator_health_should_have_correct_fields() throws Exception {
         mockMvc.perform(get("/actuator/health"))
                 .andDo(print())
                 .andExpect(status().isOk())

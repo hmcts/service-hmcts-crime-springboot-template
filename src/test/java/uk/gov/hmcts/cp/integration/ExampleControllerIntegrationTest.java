@@ -16,7 +16,7 @@ class ExampleControllerIntegrationTest extends IntegrationTestBase {
 
     @Transactional
     @Test
-    void endpointShouldReturnOk() throws Exception {
+    void endpoint_should_return_ok() throws Exception {
         ExampleEntity entity = exampleRepository.save(
                 ExampleEntity.builder()
                         .exampleText("Welcome to service-hmcts-springboot-template")

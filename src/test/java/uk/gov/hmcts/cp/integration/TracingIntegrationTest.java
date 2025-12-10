@@ -65,7 +65,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void incomingRequestShouldAddNewTracing() throws Exception {
+    void incoming_request_should_add_new_tracing() throws Exception {
         final MvcResultHelper result = performRequestAndCaptureLogs("/example/{example_id}", null, null);
         final Map<String, Object> rootControllerLog = findRootControllerLog(result.capturedLogOutput());
 
@@ -78,7 +78,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void incomingRequestWithTraceIdShouldPassThrough() throws Exception {
+    void incoming_request_with_traceId_should_pass_through() throws Exception {
         // Override the MDC with the header values that would be set by TracingFilter
         MDC.put(TRACE_ID_FIELD, TEST_TRACE_ID_2);
         MDC.put(SPAN_ID_FIELD, TEST_SPAN_ID_2);

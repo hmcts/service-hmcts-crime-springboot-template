@@ -28,7 +28,7 @@ class ExampleServiceTest {
     ExampleService exampleService;
 
     @Test
-    void serviceShouldReturnMappedResponse() {
+    void service_should_return_mapped_response() {
         ExampleEntity exampleEntity = ExampleEntity.builder().id(123L).exampleText("Text").build();
         when(exampleRepository.findById(123L)).thenReturn(Optional.ofNullable(exampleEntity));
         ExampleResponse response = exampleService.getExampleById(123L);

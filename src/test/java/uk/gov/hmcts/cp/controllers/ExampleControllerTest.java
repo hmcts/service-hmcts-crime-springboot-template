@@ -24,7 +24,7 @@ class ExampleControllerTest {
     private ExampleController exampleController;
 
     @Test
-    void getExampleByIdShouldCallService() {
+    void get_example_by_id_should_call_service() {
         ExampleResponse exampleResponse = ExampleResponse.builder().build();
         when(exampleService.getExampleById(9L)).thenReturn(exampleResponse);
 

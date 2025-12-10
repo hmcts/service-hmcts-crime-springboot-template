@@ -39,7 +39,7 @@ class JWTFilterIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void filterShouldPassWhenGoodToken() throws Exception {
+    void filter_should_pass_when_good_token() throws Exception {
         final String jwtToken = jwtService.createToken();
 
         mockMvc.perform(
@@ -53,7 +53,7 @@ class JWTFilterIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void filterShouldFailWhenMissingToken() {
+    void filter_should_fail_when_missing_token() {
         assertThatExceptionOfType(HttpClientErrorException.class)
                 .isThrownBy(() -> performGet("/"))
                 .withMessageContaining("No jwt token passed");

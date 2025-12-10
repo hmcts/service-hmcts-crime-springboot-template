@@ -22,7 +22,7 @@ class ExampleRepositoryTest extends IntegrationTestBase {
 
     @Test
     @Transactional
-    void saveAndQueryShouldReturnEntityByCaseId() {
+    void save_and_query_should_return_entity_by_case_id() {
         ExampleEntity savedEntity = exampleRepository.save(ExampleEntity.builder().exampleText("Some info").build());
         ExampleEntity retrievedEntity = exampleRepository.getReferenceById(savedEntity.getId());
         assertNotNull(retrievedEntity.getId());

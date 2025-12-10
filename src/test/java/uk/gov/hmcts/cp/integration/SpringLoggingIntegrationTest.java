@@ -26,7 +26,7 @@ class SpringLoggingIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void springbootTestShouldLogCorrectFields() throws IOException {
+    void springboot_test_should_log_correct_fields() throws IOException {
         MDC.put("any-mdc-field", "1234-1234");
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
         log.info("spring boot test message");

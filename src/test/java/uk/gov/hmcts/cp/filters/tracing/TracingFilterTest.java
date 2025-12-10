@@ -31,7 +31,7 @@ class TracingFilterTest {
     private final TracingFilter tracingFilter = new TracingFilter("myAppName");
 
     @Test
-    void filterShouldUseIncomingTraceId() throws ServletException, IOException {
+    void filter_should_use_incoming_traceId() throws ServletException, IOException {
         when(request.getHeader(TRACE_ID)).thenReturn("incoming-traceId");
         when(request.getHeader(SPAN_ID)).thenReturn("incoming-spanId");
 

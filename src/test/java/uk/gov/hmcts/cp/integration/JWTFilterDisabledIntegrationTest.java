@@ -28,7 +28,7 @@ class JWTFilterDisabledIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void filterShouldNotFailedWhenDisabled() throws Exception {
+    void filter_should_not_failed_when_disabled() throws Exception {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/example/{example_id}", entity.getId())
                 )

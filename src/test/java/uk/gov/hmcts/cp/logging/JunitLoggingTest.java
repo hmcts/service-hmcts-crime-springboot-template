@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JunitLoggingTest {
 
     @Test
-    void junitShouldLogCorrectFields() throws JsonProcessingException {
+    void junit_should_log_correct_fields() throws JsonProcessingException {
         MDC.put("traceId", "1234-1234");
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
         log.info("junit test message");

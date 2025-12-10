@@ -18,7 +18,7 @@ class  ActuatorHttpLiveTest {
     private final RestTemplate http = new RestTemplate();
 
     @Test
-    void healthIsUp() {
+    void health_is_up() {
         final ResponseEntity<String> res = http.exchange(
                 baseUrl + "/actuator/health", HttpMethod.GET,
                 new HttpEntity<>(new HttpHeaders()),
@@ -30,7 +30,7 @@ class  ActuatorHttpLiveTest {
 
     @Disabled // Lets revisit this during our monitoring spike
     @Test
-    void prometheusIsExposed() {
+    void prometheus_is_exposed() {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(java.util.List.of(MediaType.TEXT_PLAIN));
         final ResponseEntity<String> res = http.exchange(
