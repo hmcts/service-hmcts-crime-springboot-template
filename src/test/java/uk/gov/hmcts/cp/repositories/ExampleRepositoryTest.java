@@ -8,7 +8,6 @@ import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.integration.IntegrationTestBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ExampleRepositoryTest extends IntegrationTestBase {
 
@@ -25,7 +24,7 @@ class ExampleRepositoryTest extends IntegrationTestBase {
     void save_and_query_should_return_entity_by_case_id() {
         ExampleEntity savedEntity = exampleRepository.save(ExampleEntity.builder().exampleText("Some info").build());
         ExampleEntity retrievedEntity = exampleRepository.getReferenceById(savedEntity.getId());
-        assertNotNull(retrievedEntity.getId());
+        assertThat(retrievedEntity.getId()).isNotNull();
         assertThat(retrievedEntity.getExampleText()).isEqualTo("Some info");
     }
 }
