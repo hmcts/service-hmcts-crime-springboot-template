@@ -12,7 +12,7 @@ import uk.gov.hmcts.cp.config.TestContainersInitialise;
 @ContextConfiguration(initializers = TestContainersInitialise.class)
 @AutoConfigureMockMvc
 @Slf4j
-public class IntegrationTestBase {
+public abstract class IntegrationTestBase {
 
     @Resource
     protected MockMvc mockMvc;
