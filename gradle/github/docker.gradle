@@ -1,5 +1,5 @@
 dockerCompose {
-  useComposeFiles = ['docker/docker-compose.api.yml']
+  useComposeFiles = ['docker-compose.yml']
   startedServices = ['app', 'db']
 
   buildBeforeUp = true
