@@ -1,6 +1,5 @@
 package uk.gov.hmcts.cp.integration;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,20 +14,14 @@ class ExampleControllerIntegrationTest extends IntegrationTestBase {
     @Autowired
     ExampleRepository exampleRepository;
 
-    private ExampleEntity entity;
-
-    @BeforeEach
-    void setup() {
-        entity = exampleRepository.save(
+    @Transactional
+    @Test
+    void endpoint_should_return_ok() throws Exception {
+        ExampleEntity entity = exampleRepository.save(
                 ExampleEntity.builder()
                         .exampleText("Welcome to service-hmcts-springboot-template")
                         .build()
         );
-    }
-
-    @Transactional
-    @Test
-    void endpoint_should_return_ok() throws Exception {
         mockMvc.perform(get("/example/{id}", entity.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -26,12 +26,13 @@ class JunitLoggingTest {
         final Map<String, Object> capturedFields = new ObjectMapper().readValue(capturedStdOut.toString(StandardCharsets.UTF_8), new TypeReference<>() {
         });
 
-        assertThat(capturedFields.get("traceId")).isEqualTo("1234-1234");
-        assertThat(capturedFields.get("timestamp")).isNotNull();
-        assertThat(capturedFields.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.logging.JunitLoggingTest");
-        assertThat(capturedFields.get("thread_name")).isEqualTo("Test worker");
-        assertThat(capturedFields.get("level")).isEqualTo("INFO");
-        assertThat(capturedFields.get("message")).isEqualTo("junit test message");
+        assertThat(capturedFields)
+                .containsEntry("traceId", "1234-1234")
+                .containsKey("timestamp") // or keep .get("timestamp").isNotNull()
+                .containsEntry("logger_name", "uk.gov.hmcts.cp.logging.JunitLoggingTest")
+                .containsEntry("thread_name", "Test worker")
+                .containsEntry("level", "INFO")
+                .containsEntry("message", "junit test message");
     }
 
     private ByteArrayOutputStream captureStdOut() {

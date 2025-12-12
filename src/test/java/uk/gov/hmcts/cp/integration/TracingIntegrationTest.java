@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +59,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         System.setOut(originalStdOut);
         MDC.clear();
     }
@@ -71,7 +72,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
         assertThat(rootControllerLog).isNotNull();
         assertNotNull(rootControllerLog.get(TRACE_ID_FIELD));
         assertNotNull(rootControllerLog.get(SPAN_ID_FIELD));
-        assertThat(rootControllerLog.get("applicationName")).isEqualTo(springApplicationName);
+        assertThat(rootControllerLog).containsEntry("applicationName", springApplicationName);
 
         assertCommonLogFields(rootControllerLog);
     }
@@ -135,14 +136,14 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
     private void assertTracingFields(final Map<String, Object> log, final String expectedTraceId, final String expectedSpanId) {
         assertThat(log).isNotNull();
-        assertThat(log.get(TRACE_ID_FIELD)).isEqualTo(expectedTraceId);
-        assertThat(log.get(SPAN_ID_FIELD)).isEqualTo(expectedSpanId);
-        assertThat(log.get("applicationName")).isEqualTo(springApplicationName);
+        assertEquals(log.get(TRACE_ID_FIELD), expectedTraceId);
+        assertEquals(log.get(SPAN_ID_FIELD), expectedSpanId);
+        assertEquals(log.get("applicationName"), springApplicationName);
     }
 
     private void assertCommonLogFields(final Map<String, Object> log) {
-        assertThat(log.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.controllers.ExampleController");
-        assertThat(log.get("message")).isEqualTo("getExampleByExampleId example for "+entity.getId());
+        assertEquals("uk.gov.hmcts.cp.controllers.ExampleController", log.get("logger_name"));
+        assertEquals(log.get("message"), "getExampleByExampleId example for " + entity.getId());
     }
 
     private void assertResponseHeaders(final MvcResult result, final String expectedTraceId, final String expectedSpanId) {

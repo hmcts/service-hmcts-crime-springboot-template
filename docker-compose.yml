@@ -1,7 +1,6 @@
-version: '3.9'
-
 services:
-  postgres:
+  db:
+    container_name: db
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: postgres
@@ -15,15 +14,18 @@ services:
       timeout: 5s
       retries: 5
 
-  service-hmcts-marketplace-springboot-template:
-    env_file:
-      - local.env
+  app:
+    container_name: app
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
+    environment:
+      APP_NAME_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      APP_NAME_DATASOURCE_USERNAME: postgres
+      APP_NAME_DATASOURCE_PASSWORD: postgres
     ports:
       - "8082:8082"
 

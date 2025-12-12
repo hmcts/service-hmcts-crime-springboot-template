@@ -57,7 +57,7 @@ sequenceDiagram
 
     note right of GH: All assurance workflow steps are complete
     GH->>Art: Publish artefact [DRAFT] (versioned via git tag & commit SHA)
-    note right of GH: The build and publish of the image is one step via the<br/>custom action "docker/build-push-action" but is represented<br/>here as two steps for readability
+    note right of GH: The build and publish of the image is one step via the<br/>custom action "build-push-action" but is represented<br/>here as two steps for readability
     GH->>GH: Build Docker image (versioned via git tag & commit SHA)
     GH->>ACR: Publish container
 ```
