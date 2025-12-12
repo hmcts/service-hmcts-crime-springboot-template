@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,7 @@ public class TracingFilter extends OncePerRequestFilter {
     }
 
     public void populateMDC(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+        log.info("TracingFilter for uri:{}", Encode.forJava(request.getRequestURI()));
         MDC.put(APPLICATION_NAME, applicationName);
         if (request.getHeader(TRACE_ID) != null) {
             MDC.put(TRACE_ID, request.getHeader(TRACE_ID));
