@@ -34,7 +34,7 @@ This document outlines the changes made during the upgrade to Spring Boot v4.0.0
 
 #### New Dependencies
 - **Micrometer Tracing Test**: Added `io.micrometer:micrometer-tracing-test` for integration tests
-- **Lombok integration test support**: Added `integrationTestCompileOnly` and `integrationTestAnnotationProcessor`
+- **Lombok integration test support**: Added `apiTestCompileOnly` and `apiTestAnnotationProcessor`
 
 ### 3. Test Infrastructure Improvements
 
@@ -50,11 +50,7 @@ This document outlines the changes made during the upgrade to Spring Boot v4.0.0
 - **`JWTFilterIntegrationTest`**: Now extends `BaseIntegrationTest`
 - **`SpringLoggingIntegrationTest`**: Moved from `src/test` to `src/integrationTest` and extends `BaseIntegrationTest`
 
-#### Pact Test Updates
-- **`CourtScheduleProviderPactTest`**: Updated imports and annotations for Spring Boot v4 compatibility
-  - Changed `@Autowired` to `@Resource`
-  - Updated `@LocalServerPort` import path
-  - Added `jakarta.annotation.Resource` import
+#### Remove all references to Pact
 
 ### 4. Tracing Integration Test Complete Rewrite
 

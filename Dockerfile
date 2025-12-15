@@ -1,36 +1,22 @@
-# ---- Base image (default fallback) ----
-ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-eclipse-temurin:21}
+# Dockerfile (project root)
+FROM eclipse-temurin:21-jre-alpine
 
-# ---- Runtime arguments ----
-ARG JAR_FILENAME
-ARG JAR_FILE_PATH
+# minimal runtime tooling for healthcheck
+RUN apk add --no-cache curl
 
-ENV JAR_FILENAME=${JAR_FILENAME:-app.jar}
-ENV JAR_FILE_PATH=${JAR_FILE_PATH:-build/libs}
-ENV JAR_FULL_PATH=$JAR_FILE_PATH/$JAR_FILENAME
+# run as non-root
+RUN addgroup -S app && adduser -S app -G app
+WORKDIR /app
 
-# ---- Set runtime ENV for Spring Boot to bind port
-ARG SERVER_PORT
-ENV SERVER_PORT=${SERVER_PORT:-8082}
+# copy all jars (bootJar + plain). We'll run the non-plain jar.
+COPY build/libs/*.jar /app/
 
-# ---- Dependencies ----
-RUN apt-get update \
-    && apt-get install -y curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# ---- Application files ----
-COPY $JAR_FULL_PATH /opt/app/app.jar
-COPY lib/applicationinsights.json /opt/app/
-
-# ---- Permissions ----
-RUN chmod 755 /opt/app/app.jar
-
-# ---- Runtime ----
 EXPOSE ${SERVER_PORT:-8082}
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:+AlwaysActAsServerClassMachine"
 
-# Documented runtime configuration
-# JWT secret for token verification (Base64-encoded HS256 key)
-ENV JWT_SECRET_KEY="it-must-be-a-string-secret-at-least-256-bits-long"
+HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=15 \
+  CMD curl -fsS http://localhost:${SERVER_PORT:-8082}/actuator/health | grep -q '"status":"UP"' || exit 1
 
-CMD ["java", "-jar", "/opt/app/app.jar"]
+USER app
+# pick the Boot fat jar (exclude '-plain.jar')
+ENTRYPOINT ["sh","-c","exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar $(ls /app/*.jar | grep -v 'plain' | head -n1)"]
