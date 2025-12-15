@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.cp.entities.ExampleEntity;
@@ -54,9 +55,12 @@ class JWTFilterIntegrationTest extends IntegrationTestBase {
     @Test
     void filter_should_fail_when_missing_token() {
         assertThatExceptionOfType(HttpClientErrorException.class)
-                .isThrownBy(() ->
-                        mockMvc.perform(MockMvcRequestBuilders.get("/"))
-                )
+                .isThrownBy(() -> performGet("/"))
                 .withMessageContaining("No jwt token passed");
     }
+
+    private MvcResult performGet(String path) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders.get(path)).andReturn();
+    }
+
 }

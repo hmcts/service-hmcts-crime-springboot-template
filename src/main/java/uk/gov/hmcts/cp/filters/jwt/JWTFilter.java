@@ -53,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
             requestScopedToken.setUserName(extractedToken.getUserName());
             requestScopedToken.setScope(extractedToken.getScope());
         } catch (InvalidJWTException e) {
-            log.error(e.getMessage());
+            log.error("The request is failed {}", e.getMessage());
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         filterChain.doFilter(request, response);
