@@ -14,6 +14,7 @@ In the interest of creating a friendly collaboration environment, please read an
 
 ## Making a contribution
 
+
 After your idea has been accepted you can implement it. We don't allow direct changes to the codebase from the public,
 they have to go through a review first.
 
