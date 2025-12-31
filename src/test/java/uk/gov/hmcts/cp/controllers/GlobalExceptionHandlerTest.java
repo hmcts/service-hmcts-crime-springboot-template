@@ -2,13 +2,14 @@ package uk.gov.hmcts.cp.controllers;
 
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.TraceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-
 import uk.gov.hmcts.cp.openapi.model.ErrorResponse;
-import io.micrometer.tracing.TraceContext;
+
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,18 +30,30 @@ class GlobalExceptionHandlerTest {
         final GlobalExceptionHandler handler = new GlobalExceptionHandler(tracer);
 
         final String reason = "Test error";
-        final ResponseStatusException exception = new ResponseStatusException(HttpStatus.NOT_FOUND, reason);
+        final ResponseStatusException exception =
+                new ResponseStatusException(HttpStatus.NOT_FOUND, reason);
 
-        // Act
-        final ResponseEntity<ErrorResponse> response = handler.handleResponseStatusException(exception);
+        final Instant beforeCall = Instant.now();
+        
+        final ResponseEntity<ErrorResponse> response =
+                handler.handleResponseStatusException(exception);
 
-        // Assert
+        final Instant afterCall = Instant.now();
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
         final ErrorResponse error = response.getBody();
         assertNotNull(error);
         assertEquals("404", error.getError());
         assertEquals(reason, error.getMessage());
+
         assertNotNull(error.getTimestamp());
+        assertTrue(
+                !error.getTimestamp().isBefore(beforeCall)
+                        && !error.getTimestamp().isAfter(afterCall),
+                "Timestamp should be within method execution time"
+        );
+
         assertEquals("test-trace-id", error.getTraceId());
     }
 }
