@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class GlobalExceptionHandlerTest {
 
     @Test
-    void handleResponseStatusExceptionShouldReturnErrorResponseWithCorrectFields() {
+    void handle_response_status_exception_should_return_error_response_with_correct_fields() {
         // Arrange
         final Tracer tracer = mock(Tracer.class);
         final Span span = mock(Span.class);
@@ -49,5 +49,16 @@ class GlobalExceptionHandlerTest {
 
         final ErrorResponse error = response.getBody();
         assertNotNull(error);
+
         assertEquals("404", error.getError());
-        assertEquals(reason, error.get
+        assertEquals(reason, error.getMessage());
+        assertEquals("test-trace-id", error.getTraceId());
+
+        assertNotNull(error.getTimestamp());
+        assertTrue(
+                !error.getTimestamp().isBefore(beforeCall)
+                        && !error.getTimestamp().isAfter(afterCall),
+                "Timestamp should be between beforeCall and afterCall"
+        );
+    }
+}
