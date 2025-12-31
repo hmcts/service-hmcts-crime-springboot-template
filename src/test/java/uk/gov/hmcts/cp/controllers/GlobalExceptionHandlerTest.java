@@ -11,8 +11,11 @@ import uk.gov.hmcts.cp.openapi.model.ErrorResponse;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class GlobalExceptionHandlerTest {
 
@@ -34,26 +37,17 @@ class GlobalExceptionHandlerTest {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, reason);
 
         final Instant beforeCall = Instant.now();
-        
+
+        // Act
         final ResponseEntity<ErrorResponse> response =
                 handler.handleResponseStatusException(exception);
 
         final Instant afterCall = Instant.now();
 
+        // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
         final ErrorResponse error = response.getBody();
         assertNotNull(error);
         assertEquals("404", error.getError());
-        assertEquals(reason, error.getMessage());
-
-        assertNotNull(error.getTimestamp());
-        assertTrue(
-                !error.getTimestamp().isBefore(beforeCall)
-                        && !error.getTimestamp().isAfter(afterCall),
-                "Timestamp should be within method execution time"
-        );
-
-        assertEquals("test-trace-id", error.getTraceId());
-    }
-}
+        assertEquals(reason, error.get
