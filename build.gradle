@@ -40,7 +40,7 @@ springBoot {
 }
 
 dependencies {
-  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.1")
+  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2")
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
