@@ -25,7 +25,7 @@ class  ActuatorHttpLiveTest {
                 String.class
         );
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(res.getBody()).contains("\"status\":\"UP\"");
+        assertThat(res.getBody()).contains("\"status\":\"UPXX\"");
     }
 
     @Disabled // Lets revisit this during our monitoring spike
