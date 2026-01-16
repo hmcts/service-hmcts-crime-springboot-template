@@ -32,7 +32,7 @@ Further documentation can be found in the [docs](docs) directory.
 
 ### Prerequisites
 
-- ☕️ **Java 21.0.8 or later**: Ensure Java is installed and available on your `PATH`.
+- ☕️ **Java 25 or later**: Ensure Java is installed and available on your `PATH`.
 - ⚙️ **Gradle**: [Install Gradle](https://gradle.org/install/). The project itself defines which Gradle version to use (gradle/wraper/gradle-wrapper.properties).
 
 You can verify installation with:

@@ -1,11 +1,13 @@
 # Dockerfile (project root)
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre
 
 # minimal runtime tooling for healthcheck
-RUN apk add --no-cache curl
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # run as non-root
-RUN addgroup -S app && adduser -S app -G app
+RUN groupadd -r app && useradd -r -g app app
 WORKDIR /app
 
 # copy all jars (bootJar + plain). We'll run the non-plain jar.
