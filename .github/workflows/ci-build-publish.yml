@@ -60,11 +60,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          gradle-version: current
-
       - name: Gradle Build
         env:
           ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
