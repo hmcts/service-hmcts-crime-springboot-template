@@ -60,17 +60,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          gradle-version: current
-
       - name: Gradle Build
         env:
           ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
         run: |
           echo "Building with ARTEFACT_VERSION=$ARTEFACT_VERSION"
-          gradle build -DARTEFACT_VERSION=$ARTEFACT_VERSION
+          ./gradlew build -DARTEFACT_VERSION=$ARTEFACT_VERSION
 
       - name: Extract repo name
         id: repo_vars
@@ -121,7 +116,7 @@ jobs:
 
           echo "Publishing artefact for version: $ARTEFACT_VERSION"
           
-          gradle publish \
+          ./gradlew publish \
             -DARTEFACT_VERSION=$ARTEFACT_VERSION \
             -DGITHUB_REPOSITORY=${{ github.repository }} \
             -DGITHUB_ACTOR=${{ github.actor }} \
