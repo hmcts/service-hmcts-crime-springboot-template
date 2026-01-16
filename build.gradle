@@ -19,7 +19,7 @@ apply {
   from("$rootDir/gradle/dependencies/spring-core.gradle")
   from("$rootDir/gradle/dependencies/spring-db.gradle")
 
-  from("$rootDir/gradle/tasks/apitest.gradle")
+  from("$rootDir/gradle/tasks/api-test.gradle")
 
   from("$rootDir/gradle/github/repositories.gradle")
   from("$rootDir/gradle/github/java.gradle")
