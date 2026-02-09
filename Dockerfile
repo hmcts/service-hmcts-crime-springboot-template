@@ -1,24 +1,19 @@
-# Dockerfile (project root)
-FROM eclipse-temurin:25-jre
+# Docker base image - note that this is currently overwritten by azure pipelines
+FROM ${BASE_IMAGE:-eclipse-temurin:21-jdk}
 
-# minimal runtime tooling for healthcheck
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# run as non-root
+# run as non-root ... group and user "app"
 RUN groupadd -r app && useradd -r -g app app
 WORKDIR /app
 
-# copy all jars (bootJar + plain). We'll run the non-plain jar.
+# ---- Dependencies ----
+RUN apt-get update \
+    && apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/* \
+
+# copy startup script and app jar file
+COPY docker/* /app/
 COPY build/libs/*.jar /app/
-
-EXPOSE ${SERVER_PORT:-8082}
-ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:+AlwaysActAsServerClassMachine"
-
-HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=15 \
-  CMD curl -fsS http://localhost:${SERVER_PORT:-8082}/actuator/health | grep -q '"status":"UP"' || exit 1
+COPY lib/applicationinsights.json /app/
 
 USER app
-# pick the Boot fat jar (exclude '-plain.jar')
-ENTRYPOINT ["sh","-c","exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar $(ls /app/*.jar | grep -v 'plain' | head -n1)"]
+ENTRYPOINT ["/bin/sh","./startup.sh"]
