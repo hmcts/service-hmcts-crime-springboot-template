@@ -19,15 +19,14 @@ apply {
   from("$rootDir/gradle/dependencies/spring-core.gradle")
   from("$rootDir/gradle/dependencies/spring-db.gradle")
 
-  from("$rootDir/gradle/tasks/apitest.gradle")
-
   from("$rootDir/gradle/github/repositories.gradle")
   from("$rootDir/gradle/github/java.gradle")
   from("$rootDir/gradle/github/dependency.gradle")
   from("$rootDir/gradle/github/pmd.gradle")
   from("$rootDir/gradle/github/test.gradle")
   from("$rootDir/gradle/github/jar.gradle")
-  from("$rootDir/gradle/github/docker.gradle")
+
+  from("$rootDir/gradle/tasks/api-test.gradle")
 }
 
 springBoot {
