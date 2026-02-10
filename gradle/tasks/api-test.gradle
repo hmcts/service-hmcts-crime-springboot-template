@@ -61,3 +61,20 @@ dependencies {
   apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 }
+
+dockerCompose {
+  useComposeFiles = ['docker-compose.yml']
+  startedServices = ['app', 'db']
+
+  buildBeforeUp = true
+  waitForTcpPorts = true
+  upAdditionalArgs = ['--wait', '--wait-timeout', '120']
+
+  captureContainersOutput = true
+  removeOrphans = true
+  stopContainers = true
+  removeContainers = true
+
+  useDockerComposeV2 = true
+  dockerExecutable = 'docker'
+}
