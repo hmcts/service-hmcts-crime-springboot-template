@@ -63,7 +63,7 @@ dependencies {
 }
 
 dockerCompose {
-  useComposeFiles = ['docker/docker-compose.yml']
+  useComposeFiles = ['docker-compose.yml']
   startedServices = ['app', 'db']
 
   buildBeforeUp = true
