@@ -1,34 +1,97 @@
+// ============================================================================
+// Plugins
+// ============================================================================
 plugins {
   id 'application'
   id 'java'
-  alias(libs.plugins.spring.boot)
-  alias(libs.plugins.spring.dependency.management)
+  id 'pmd'
+  id 'org.springframework.boot' version '4.0.0'
+  id 'io.spring.dependency-management' version '1.1.7'
   id 'jacoco'
   id 'maven-publish'
-  alias(libs.plugins.ben.manes.versions)
-  alias(libs.plugins.cyclonedx.bom)
-  alias(libs.plugins.gradle.git.properties)
-  alias(libs.plugins.avast.docker.compose)
+  id 'com.github.ben-manes.versions' version '0.53.0'
+  id 'org.cyclonedx.bom' version '2.4.1'
+  id 'com.gorylenko.gradle-git-properties' version '2.5.3'
+  id 'com.avast.gradle.docker-compose' version '0.17.12'
 }
 
+// ============================================================================
+// Project Metadata
+// ============================================================================
 group = 'uk.gov.hmcts.cp'
 version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
 
-apply {
-  from("$rootDir/gradle/dependencies/java-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-db.gradle")
+// ============================================================================
+// Dependency Versions
+// ============================================================================
+def versions = [
+  hmctsCrimeTemplate   : '2.0.2',
+  jjwt                 : '0.13.0',
+  swaggerCore          : '2.2.36',
+  junitBom             : '5.13.4',
+  logstashLogback      : '8.1',
+  owaspEncoder         : '1.2.3',
+  lombok               : '1.18.38',
+  mapstruct            : '1.5.5.Final',
+  springBoot           : '4.0.3',
+  testcontainers       : '1.21.3',
+]
 
-  from("$rootDir/gradle/github/repositories.gradle")
-  from("$rootDir/gradle/github/java.gradle")
-  from("$rootDir/gradle/github/dependency.gradle")
-  from("$rootDir/gradle/github/pmd.gradle")
-  from("$rootDir/gradle/github/test.gradle")
-  from("$rootDir/gradle/github/jar.gradle")
+// ============================================================================
+// Repository / Publishing Credentials
+// ============================================================================
+def githubActor = project.findProperty('github.actor') ?: System.getenv('GITHUB_ACTOR')
+def githubToken = project.findProperty('github.token') ?: System.getenv('GITHUB_TOKEN')
+def githubRepo = System.getenv('GITHUB_REPOSITORY')
+def azureAdoArtifactRepository = 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
+def azureAdoArtifactActor = System.getenv('AZURE_DEVOPS_ARTIFACT_USERNAME')
+def azureAdoArtifactToken = System.getenv('AZURE_DEVOPS_ARTIFACT_TOKEN')
 
-  from("$rootDir/gradle/tasks/api-test.gradle")
+// ============================================================================
+// Repositories / Publishing
+// ============================================================================
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven {
+    url = azureAdoArtifactRepository
+  }
 }
 
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifact(tasks.named('bootJar'))
+      artifact(tasks.named('jar'))
+      pom {
+        name = project.name
+        url = "https://github.com/${githubRepo ?: 'org/repo'}"
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = 'GitHubPackages'
+      url = uri("https://maven.pkg.github.com/$githubRepo")
+      credentials {
+        username = githubActor
+        password = githubToken
+      }
+    }
+    maven {
+      name = 'AzureArtifacts'
+      url = uri(azureAdoArtifactRepository)
+      credentials {
+        username = azureAdoArtifactActor
+        password = azureAdoArtifactToken
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Java / Spring Boot
+// ============================================================================
 springBoot {
   buildInfo {
     properties {
@@ -38,19 +101,257 @@ springBoot {
   }
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+}
+
+sourceSets {
+  apiTest {
+    java {
+      compileClasspath += sourceSets.main.output
+      runtimeClasspath += sourceSets.main.output
+    }
+    resources.srcDir file('src/apiTest/resources')
+  }
+}
+
+configurations {
+  apiTestImplementation.extendsFrom testImplementation
+  apiTestRuntimeOnly.extendsFrom testRuntimeOnly
+
+  // Ensure testRuntimeClasspath can be resolved for agent injection.
+  testRuntimeClasspath {
+    canBeResolved = true
+  }
+}
+
+// ============================================================================
+// Dependencies
+// ============================================================================
 dependencies {
-  implementation libs.hmcts.crime.template
+  // Runtime dependencies.
+  implementation "uk.gov.hmcts.cp:api-hmcts-crime-template:${versions.hmctsCrimeTemplate}"
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.hibernate.validator:hibernate-validator'
+  implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+  implementation "io.jsonwebtoken:jjwt:${versions.jjwt}"
+  implementation "io.swagger.core.v3:swagger-core:${versions.swaggerCore}"
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.postgresql:postgresql'
+  implementation 'org.springframework.boot:spring-boot-starter-flyway'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'org.flywaydb:flyway-database-postgresql'
+  implementation "net.logstash.logback:logstash-logback-encoder:${versions.logstashLogback}"
+  implementation 'org.apache.logging.log4j:log4j-to-slf4j'
+  implementation 'ch.qos.logback:logback-classic'
+  implementation 'ch.qos.logback:logback-core'
+  implementation "org.owasp.encoder:encoder:${versions.owaspEncoder}"
+  implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
 
-  // --- Observability / Actuator / OTEL / Prometheus ---
-  implementation libs.spring.boot.starter.actuator
-  implementation libs.hibernate.validator
-  implementation libs.spring.boot.starter.opentelemetry
-  implementation libs.jjwt
-  testRuntimeOnly libs.junit.platform.launcher
+  // Annotation processors / compile only.
+  compileOnly "org.projectlombok:lombok:${versions.lombok}"
+  annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+  annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
 
-  // Should come in with the api
-  implementation libs.swagger.core
+  // Unit test dependencies.
+  testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+  testImplementation "org.springframework.boot:spring-boot-testcontainers:${versions.springBoot}"
+  testImplementation "org.testcontainers:postgresql:${versions.testcontainers}"
+  testImplementation "org.testcontainers:junit-jupiter:${versions.testcontainers}"
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  testImplementation(platform("org.junit:junit-bom:${versions.junitBom}"))
+  testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
+  testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-  testImplementation(platform(libs.junit.bom))
-  testRuntimeOnly libs.junit.jupiter.engine
+  // Api test dependencies.
+  apiTestImplementation platform("org.junit:junit-bom:${versions.junitBom}")
+  apiTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  apiTestCompileOnly "org.projectlombok:lombok:${versions.lombok}"
+  apiTestAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+  apiTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  apiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// ============================================================================
+// Compile / Wrapper Tasks
+// ============================================================================
+tasks.named('wrapper') {
+  delete "${projectDir}/gradlew.bat"
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs << '-Xlint:unchecked' << '-Werror'
+}
+
+// https://github.com/gradle/gradle/issues/16791
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+}
+
+// ============================================================================
+// Test Tasks
+// ============================================================================
+tasks.named('test') {
+  useJUnitPlatform {
+  }
+  systemProperty 'API_SPEC_VERSION', project.version
+  failFast = true
+  // Mockito must be added as an agent, see:
+  // https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+  jvmArgs += [
+    "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
+  ]
+  testLogging {
+    events 'passed', 'skipped', 'failed'
+    exceptionFormat = 'full'
+    showStandardStreams = true
+  }
+  reports {
+    junitXml.required.set(true)
+    html.required.set(true)
+  }
+}
+
+tasks.register('api', Test) {
+  description = 'Runs api tests against docker-compose stack'
+  group = 'Verification'
+
+  mustRunAfter tasks.named('test')
+
+  testClassesDirs = sourceSets.apiTest.output.classesDirs
+  classpath = sourceSets.apiTest.runtimeClasspath
+  useJUnitPlatform()
+
+  dependsOn tasks.composeUp
+  finalizedBy tasks.composeDown
+
+  jvmArgs = ['-Xshare:off']
+  testLogging {
+    events 'passed', 'skipped', 'failed'
+    exceptionFormat = 'full'
+    showStandardStreams = true
+  }
+}
+
+tasks.named('check') {
+  dependsOn tasks.named('api')
+}
+
+tasks.named('build') {
+  dependsOn tasks.named('test')
+  dependsOn tasks.named('api')
+}
+
+tasks.named('jacocoTestReport') {
+  dependsOn tasks.named('test')
+  executionData fileTree(
+    dir: layout.buildDirectory.dir('jacoco').get().asFile,
+    include: ['*.exec']
+  )
+  reports {
+    xml.required.set(true)
+    csv.required.set(false)
+    html.required.set(true)
+  }
+}
+
+// ============================================================================
+// Quality Tasks
+// ============================================================================
+tasks.named('dependencyUpdates').configure {
+  def isNonStable = { String dependencyVersion ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier ->
+      dependencyVersion.toUpperCase().contains(qualifier)
+    }
+    def regex = /^[0-9,.v-]+$/
+    !stableKeyword && !(dependencyVersion ==~ regex)
+  }
+  rejectVersionIf {
+    isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
+  }
+}
+
+pmd {
+  ruleSets = []
+  ruleSetFiles = files('.github/pmd-ruleset.xml')
+  ignoreFailures = false
+}
+
+tasks.named('pmdMain').configure {
+  onlyIf { gradle.startParameter.taskNames.contains(name) }
+}
+
+tasks.named('pmdTest').configure {
+  enabled = false
+}
+
+tasks.withType(Pmd).configureEach {
+  reports {
+    xml.required.set(true)
+    html.required.set(true)
+  }
+}
+
+tasks.withType(Checkstyle).configureEach {
+  def generatedDir = file("${layout.buildDirectory.get().asFile.absolutePath}/generated/src/main/java").canonicalPath
+  source = source.filter { file ->
+    !file.canonicalPath.startsWith(generatedDir)
+  }
+}
+
+// ============================================================================
+// Packaging / Artifacts
+// ============================================================================
+jar {
+  // We do not need the *-plain.jar artifact from the default jar task.
+  enabled = false
+}
+
+bootJar {
+  archiveFileName = "${rootProject.name}-${project.version}.jar"
+
+  manifest {
+    attributes('Implementation-Version': project.version.toString())
+  }
+}
+
+tasks.named('composeBuild') {
+  dependsOn tasks.named('bootJar')
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = false
+  reproducibleFileOrder = true
+}
+
+// ============================================================================
+// Docker Compose
+// ============================================================================
+dockerCompose {
+  useComposeFiles = ['docker-compose.yml']
+  startedServices = ['app', 'db']
+
+  buildBeforeUp = true
+  waitForTcpPorts = true
+  upAdditionalArgs = ['--wait', '--wait-timeout', '120']
+
+  captureContainersOutput = true
+  removeOrphans = true
+  stopContainers = true
+  removeContainers = true
+
+  useDockerComposeV2 = true
+  dockerExecutable = 'docker'
 }
