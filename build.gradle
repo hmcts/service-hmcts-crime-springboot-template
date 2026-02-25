@@ -1,14 +1,14 @@
 plugins {
   id 'application'
   id 'java'
-  id 'org.springframework.boot' version '4.0.0'
-  id 'io.spring.dependency-management' version '1.1.7'
+  alias(libs.plugins.spring.boot)
+  alias(libs.plugins.spring.dependency.management)
   id 'jacoco'
   id 'maven-publish'
-  id 'com.github.ben-manes.versions' version '0.53.0'
-  id 'org.cyclonedx.bom' version '2.4.1'
-  id 'com.gorylenko.gradle-git-properties' version '2.5.3'
-  id 'com.avast.gradle.docker-compose' version '0.17.12'
+  alias(libs.plugins.ben.manes.versions)
+  alias(libs.plugins.cyclonedx.bom)
+  alias(libs.plugins.gradle.git.properties)
+  alias(libs.plugins.avast.docker.compose)
 }
 
 group = 'uk.gov.hmcts.cp'
@@ -39,18 +39,18 @@ springBoot {
 }
 
 dependencies {
-  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2")
+  implementation libs.hmcts.crime.template
 
   // --- Observability / Actuator / OTEL / Prometheus ---
-  implementation 'org.springframework.boot:spring-boot-starter-actuator'
-  implementation 'org.hibernate.validator:hibernate-validator'
-  implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
-  implementation 'io.jsonwebtoken:jjwt:0.13.0'
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  implementation libs.spring.boot.starter.actuator
+  implementation libs.hibernate.validator
+  implementation libs.spring.boot.starter.opentelemetry
+  implementation libs.jjwt
+  testRuntimeOnly libs.junit.platform.launcher
 
   // Should come in with the api
-  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
+  implementation libs.swagger.core
 
-  testImplementation(platform('org.junit:junit-bom:5.13.4'))
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation(platform(libs.junit.bom))
+  testRuntimeOnly libs.junit.jupiter.engine
 }

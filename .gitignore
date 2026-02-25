@@ -1,4 +1,6 @@
 gradle
+!gradle/
+!gradle/libs.versions.toml
 bin/*
 !bin/run-in-docker.sh
 .gradle
