@@ -58,8 +58,8 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
   apiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-  apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-  apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+  apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
 }
 
 dockerCompose {

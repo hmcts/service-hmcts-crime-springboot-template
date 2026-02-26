@@ -15,18 +15,14 @@ group = 'uk.gov.hmcts.cp'
 version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
 
 apply {
-  from("$rootDir/gradle/dependencies/java-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-db.gradle")
+  from("$rootDir/gradle/repositories.gradle")
+  from("$rootDir/gradle/java.gradle")
+  from("$rootDir/gradle/dependency.gradle")
+  from("$rootDir/gradle/pmd.gradle")
+  from("$rootDir/gradle/test.gradle")
+  from("$rootDir/gradle/jar.gradle")
 
-  from("$rootDir/gradle/github/repositories.gradle")
-  from("$rootDir/gradle/github/java.gradle")
-  from("$rootDir/gradle/github/dependency.gradle")
-  from("$rootDir/gradle/github/pmd.gradle")
-  from("$rootDir/gradle/github/test.gradle")
-  from("$rootDir/gradle/github/jar.gradle")
-
-  from("$rootDir/gradle/tasks/api-test.gradle")
+  from("$rootDir/gradle/api-test.gradle")
 }
 
 springBoot {
@@ -39,7 +35,48 @@ springBoot {
 }
 
 dependencies {
+  // Api spec
   implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2")
+  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
+
+
+  // Java core
+  implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+  implementation 'org.apache.logging.log4j:log4j-to-slf4j'
+  implementation 'ch.qos.logback:logback-classic'
+  implementation 'ch.qos.logback:logback-core'
+  implementation 'org.owasp.encoder:encoder:1.2.3'
+
+  compileOnly 'org.projectlombok:lombok:1.18.38'
+  annotationProcessor 'org.projectlombok:lombok:1.18.38'
+  testCompileOnly 'org.projectlombok:lombok:1.18.38'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+  implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+
+  // Spring boot core
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+  testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+
+
+  // Spring boot database / postgres
+  //
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.postgresql:postgresql'
+  implementation 'org.springframework.boot:spring-boot-starter-flyway'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'org.flywaydb:flyway-database-postgresql'
+  testImplementation("org.springframework.boot:spring-boot-testcontainers:4.0.0")
+  testImplementation 'org.testcontainers:postgresql:1.21.3'
+  testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
+
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -47,9 +84,6 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-  // Should come in with the api
-  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
 
   testImplementation(platform('org.junit:junit-bom:5.13.4'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
