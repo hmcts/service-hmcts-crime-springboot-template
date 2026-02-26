@@ -1,10 +1,10 @@
 dependencies {
-  implementation libs.spring.boot.starter.web
-  implementation libs.spring.boot.starter.aspectj
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 
-  testImplementation libs.spring.boot.starter.webmvc.test
+  testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
 
-  testImplementation(libs.spring.boot.starter.test) {
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
