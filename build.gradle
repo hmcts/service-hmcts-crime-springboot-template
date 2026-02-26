@@ -82,9 +82,8 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
   implementation 'org.hibernate.validator:hibernate-validator'
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
-  implementation 'io.jsonwebtoken:jjwt:0.13.0'
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-  testImplementation(platform('org.junit:junit-bom:5.13.4'))
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+  // Jwt token
+  implementation 'io.jsonwebtoken:jjwt:0.13.0'
 }
