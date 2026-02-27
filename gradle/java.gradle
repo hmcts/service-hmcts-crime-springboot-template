@@ -11,3 +11,7 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
+
+tasks.named('wrapper') {
+  delete "${projectDir}/gradlew.bat"
+}

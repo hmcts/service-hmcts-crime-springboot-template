@@ -50,16 +50,16 @@ configurations {
 }
 
 dependencies {
-  apiTestImplementation platform(libs.junit.bom)
-  apiTestRuntimeOnly libs.junit.jupiter.engine
+  apiTestImplementation platform('org.junit:junit-bom:5.13.4')
+  apiTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-  apiTestImplementation(libs.spring.boot.starter.test) {
+  apiTestImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  apiTestRuntimeOnly libs.junit.platform.launcher
-  apiTestCompileOnly libs.lombok
-  apiTestAnnotationProcessor libs.lombok
+  apiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+  apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
 }
 
 dockerCompose {
