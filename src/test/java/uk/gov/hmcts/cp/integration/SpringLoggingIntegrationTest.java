@@ -31,7 +31,6 @@ class SpringLoggingIntegrationTest extends IntegrationTestBase {
         MDC.put("any-mdc-field", "1234-1234");
         ByteArrayOutputStream capturedStdOut = captureStdOut();
         log.info("spring boot test message", new RuntimeException("MyException"));
-        captureAsyncLogs();
 
         String logMessage = capturedStdOut.toString();
         AssertionsForClassTypes.assertThat(logMessage).isNotEmpty();
@@ -50,12 +49,5 @@ class SpringLoggingIntegrationTest extends IntegrationTestBase {
         final ByteArrayOutputStream capturedStdOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(capturedStdOut));
         return capturedStdOut;
-    }
-
-    private void captureAsyncLogs() {
-        AsyncAppender asyncAppender = (AsyncAppender) ((ch.qos.logback.classic.Logger) LoggerFactory
-                .getLogger("ROOT"))
-                .getAppender("ASYNC_JSON");
-        asyncAppender.stop();
     }
 }
