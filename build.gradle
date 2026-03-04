@@ -1,32 +1,28 @@
 plugins {
   id 'application'
   id 'java'
-  alias(libs.plugins.spring.boot)
-  alias(libs.plugins.spring.dependency.management)
+  id 'org.springframework.boot' version '4.0.0'
+  id 'io.spring.dependency-management' version '1.1.7'
   id 'jacoco'
   id 'maven-publish'
-  alias(libs.plugins.ben.manes.versions)
-  alias(libs.plugins.cyclonedx.bom)
-  alias(libs.plugins.gradle.git.properties)
-  alias(libs.plugins.avast.docker.compose)
+  id 'com.github.ben-manes.versions' version '0.53.0'
+  id 'org.cyclonedx.bom' version '2.4.1'
+  id 'com.gorylenko.gradle-git-properties' version '2.5.3'
+  id 'com.avast.gradle.docker-compose' version '0.17.12'
 }
 
 group = 'uk.gov.hmcts.cp'
 version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
 
 apply {
-  from("$rootDir/gradle/dependencies/java-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-db.gradle")
+  from("$rootDir/gradle/repositories.gradle")
+  from("$rootDir/gradle/java.gradle")
+  from("$rootDir/gradle/dependency.gradle")
+  from("$rootDir/gradle/pmd.gradle")
+  from("$rootDir/gradle/test.gradle")
+  from("$rootDir/gradle/jar.gradle")
 
-  from("$rootDir/gradle/github/repositories.gradle")
-  from("$rootDir/gradle/github/java.gradle")
-  from("$rootDir/gradle/github/dependency.gradle")
-  from("$rootDir/gradle/github/pmd.gradle")
-  from("$rootDir/gradle/github/test.gradle")
-  from("$rootDir/gradle/github/jar.gradle")
-
-  from("$rootDir/gradle/tasks/api-test.gradle")
+  from("$rootDir/gradle/api-test.gradle")
 }
 
 springBoot {
@@ -39,18 +35,55 @@ springBoot {
 }
 
 dependencies {
-  implementation libs.hmcts.crime.template
+  // Api spec
+  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2")
+  implementation 'io.swagger.core.v3:swagger-core:2.2.36'
+
+
+  // Java core
+  implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+  implementation 'org.apache.logging.log4j:log4j-to-slf4j'
+  implementation 'ch.qos.logback:logback-classic'
+  implementation 'ch.qos.logback:logback-core'
+  implementation 'org.owasp.encoder:encoder:1.2.3'
+
+  compileOnly 'org.projectlombok:lombok:1.18.38'
+  annotationProcessor 'org.projectlombok:lombok:1.18.38'
+  testCompileOnly 'org.projectlombok:lombok:1.18.38'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+  implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+
+  // Spring boot core
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+  testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+
+
+  // Spring boot database / postgres
+  //
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.postgresql:postgresql'
+  implementation 'org.springframework.boot:spring-boot-starter-flyway'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'org.flywaydb:flyway-database-postgresql'
+  testImplementation("org.springframework.boot:spring-boot-testcontainers:4.0.0")
+  testImplementation 'org.testcontainers:postgresql:1.21.3'
+  testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
+
 
   // --- Observability / Actuator / OTEL / Prometheus ---
-  implementation libs.spring.boot.starter.actuator
-  implementation libs.hibernate.validator
-  implementation libs.spring.boot.starter.opentelemetry
-  implementation libs.jjwt
-  testRuntimeOnly libs.junit.platform.launcher
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.hibernate.validator:hibernate-validator'
+  implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
 
-  // Should come in with the api
-  implementation libs.swagger.core
 
-  testImplementation(platform(libs.junit.bom))
-  testRuntimeOnly libs.junit.jupiter.engine
+  // Jwt token
+  implementation 'io.jsonwebtoken:jjwt:0.13.0'
 }
