@@ -143,7 +143,7 @@ class TracingIntegrationTest extends IntegrationTestBase {
 
     private void assertCommonLogFields(final Map<String, Object> log) {
         assertEquals("uk.gov.hmcts.cp.controllers.ExampleController", log.get("logger_name"));
-        assertEquals(log.get("message"), "getExampleByExampleId example for " + entity.getId());
+        assertEquals(log.get("message"), "getExampleByExampleId example for " + entity.getId() + "\n");
     }
 
     private void assertResponseHeaders(final MvcResult result, final String expectedTraceId, final String expectedSpanId) {
