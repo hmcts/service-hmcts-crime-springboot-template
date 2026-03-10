@@ -25,15 +25,8 @@ apply {
   from("$rootDir/gradle/api-test.gradle")
 }
 
-springBoot {
-  buildInfo {
-    properties {
-      name = project.name
-      version = project.version.toString()
-    }
-  }
-}
-
+// We MUST keep all dependencies in the build.gradle to allow dependabot to provide version updates
+// Sadly, dependabot does not track dependencies in the apply-from files
 dependencies {
   // Api spec
   implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2")
@@ -86,4 +79,16 @@ dependencies {
 
   // Jwt token
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
+
+
+  // Api Test
+  apiTestImplementation platform('org.junit:junit-bom:5.13.4')
+  apiTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  apiTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+  apiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+  apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
 }

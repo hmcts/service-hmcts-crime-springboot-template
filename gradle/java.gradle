@@ -15,3 +15,12 @@ tasks.withType(JavaExec).configureEach {
 tasks.named('wrapper') {
   delete "${projectDir}/gradlew.bat"
 }
+
+springBoot {
+  buildInfo {
+    properties {
+      name = project.name
+      version = project.version.toString()
+    }
+  }
+}
