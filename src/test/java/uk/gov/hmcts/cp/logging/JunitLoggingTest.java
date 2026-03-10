@@ -32,7 +32,7 @@ class JunitLoggingTest {
                 .containsEntry("logger_name", "uk.gov.hmcts.cp.logging.JunitLoggingTest")
                 .containsEntry("thread_name", "Test worker")
                 .containsEntry("level", "INFO")
-                .containsEntry("message", "junit test message");
+                .containsEntry("message", "junit test message\n");
     }
 
     private ByteArrayOutputStream captureStdOut() {
