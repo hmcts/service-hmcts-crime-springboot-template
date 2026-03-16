@@ -2,6 +2,7 @@
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
+                <mdc/>
                 <timestamp>
                     <fieldName>timestamp</fieldName>
                     <pattern>yyyy-MM-dd' 'HH:mm:ss.SSS</pattern>
@@ -10,13 +11,13 @@
                 <pattern>
                     <pattern>{"message": "%message%n%xException{full}"}</pattern>
                 </pattern>
-                <mdc/>
                 <loggerName/>
                 <threadName/>
                 <logLevel/>
             </providers>
         </encoder>
     </appender>
+
     <root level="INFO">
         <appender-ref ref="JSON"/>
     </root>

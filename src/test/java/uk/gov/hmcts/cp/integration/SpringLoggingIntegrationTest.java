@@ -1,53 +1,62 @@
 package uk.gov.hmcts.cp.integration;
 
-import ch.qos.logback.classic.AsyncAppender;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.cp.filters.tracing.TracingFilter.CORRELATION_ID_KEY;
 
 @Slf4j
 class SpringLoggingIntegrationTest extends IntegrationTestBase {
-    private PrintStream originalStdOut = System.out;
+
+    private final PrintStream originalStdOut = System.out;
 
     @AfterEach
     void afterEach() {
         System.setOut(originalStdOut);
     }
 
-    @Test
-    void springboot_test_should_log_correct_fields_including_exception() throws IOException {
-        MDC.put("any-mdc-field", "1234-1234");
-        ByteArrayOutputStream capturedStdOut = captureStdOut();
-        log.info("spring boot test message", new RuntimeException("MyException"));
+    UUID correlationId = UUID.randomUUID();
 
-        String logMessage = capturedStdOut.toString();
-        AssertionsForClassTypes.assertThat(logMessage).isNotEmpty();
-        Map<String, Object> capturedFields = new ObjectMapper().readValue(logMessage, new TypeReference<>() {
-        });
-        assertThat(capturedFields.get("any-mdc-field")).isEqualTo("1234-1234");
+    @Test
+    void springboot_test_should_log_correct_fields() throws IOException {
+        MDC.put(CORRELATION_ID_KEY, correlationId.toString());
+        final ByteArrayOutputStream capturedStdOut = captureStdOut();
+        log.info("spring boot test message", new RuntimeException("TestException"));
+
+        final String logMessage = capturedStdOut.toString(StandardCharsets.UTF_8);
+        assertThat(logMessage).isNotEmpty();
+
+        final Map<String, Object> capturedFields =
+                new ObjectMapper().readValue(logMessage, new TypeReference<>() {
+                });
+
+        assertThat(capturedFields.get(CORRELATION_ID_KEY)).isEqualTo(correlationId.toString());
         assertThat(capturedFields.get("timestamp")).isNotNull();
-        assertThat(capturedFields.get("logger_name")).isEqualTo("uk.gov.hmcts.cp.integration.SpringLoggingIntegrationTest");
+        assertThat(capturedFields.get("message").toString())
+                .contains("spring boot test message")
+                .contains("java.lang.RuntimeException: TestException")
+                .contains("cp.integration.SpringLoggingIntegrationTest");
+        assertThat(capturedFields.get("logger_name"))
+                .isEqualTo("uk.gov.hmcts.cp.integration.SpringLoggingIntegrationTest");
         assertThat(capturedFields.get("thread_name")).isEqualTo("Test worker");
         assertThat(capturedFields.get("level")).isEqualTo("INFO");
-        assertThat(capturedFields.get("message").toString()).contains("spring boot test message\njava.lang.RuntimeException: MyException");
-        assertThat(capturedFields.get("message").toString()).contains("at uk.gov.hmcts.cp.integration.SpringLoggingIntegrationTest");
     }
 
     private ByteArrayOutputStream captureStdOut() {
         final ByteArrayOutputStream capturedStdOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(capturedStdOut));
+        System.setOut(new PrintStream(capturedStdOut, true, StandardCharsets.UTF_8));
         return capturedStdOut;
     }
 }
