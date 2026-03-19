@@ -44,8 +44,8 @@ class SpringLoggingIntegrationTest extends IntegrationTestBase {
 
         assertThat(capturedFields.get(CORRELATION_ID_KEY)).isEqualTo(correlationId.toString());
         assertThat(capturedFields.get("timestamp")).isNotNull();
-        assertThat(capturedFields.get("message").toString())
-                .contains("spring boot test message")
+        assertThat(capturedFields.get("message").toString()).contains("spring boot test message");
+        assertThat(capturedFields.get("exception").toString())
                 .contains("java.lang.RuntimeException: TestException")
                 .contains("cp.integration.SpringLoggingIntegrationTest");
         assertThat(capturedFields.get("logger_name"))
