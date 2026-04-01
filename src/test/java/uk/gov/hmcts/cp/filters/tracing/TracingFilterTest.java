@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -11,16 +12,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.cp.filters.tracing.TracingFilter.APPLICATION_NAME;
-import static uk.gov.hmcts.cp.filters.tracing.TracingFilter.SPAN_ID;
-import static uk.gov.hmcts.cp.filters.tracing.TracingFilter.TRACE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class TracingFilterTest {
+
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -28,19 +30,37 @@ class TracingFilterTest {
     @Mock
     private FilterChain filterChain;
 
-    private final TracingFilter tracingFilter = new TracingFilter("myAppName");
+    private final TracingFilter filter = new TracingFilter();
+
+    @AfterEach
+    void tearDown() {
+        MDC.clear();
+    }
 
     @Test
-    void filter_should_use_incoming_traceId() throws ServletException, IOException {
-        when(request.getHeader(TRACE_ID)).thenReturn("incoming-traceId");
-        when(request.getHeader(SPAN_ID)).thenReturn("incoming-spanId");
+    void shouldAlwaysFilter_all_paths() {
+        assertThat(filter.shouldNotFilter(request)).isFalse();
+    }
 
-        tracingFilter.populateMDC(request, response, filterChain);
+    @Test
+    void doFilterInternal_puts_correlationId_in_MDC_and_response_when_header_present() throws ServletException, IOException {
+        final String correlationId = UUID.randomUUID().toString();
+        when(request.getHeader(TracingFilter.CORRELATION_ID_KEY)).thenReturn(correlationId);
 
-        assertThat(MDC.get(APPLICATION_NAME)).isEqualTo("myAppName");
-        verify(response).setHeader(TRACE_ID, "incoming-traceId");
-        assertThat(MDC.get(TRACE_ID)).isEqualTo("incoming-traceId");
-        verify(response).setHeader(SPAN_ID, "incoming-spanId");
-        assertThat(MDC.get(SPAN_ID)).isEqualTo("incoming-spanId");
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(response).setHeader(TracingFilter.CORRELATION_ID_KEY, correlationId);
+        verify(filterChain).doFilter(request, response);
+        assertThat(MDC.get(TracingFilter.CORRELATION_ID_KEY)).isNull();
+    }
+
+    @Test
+    void doFilterInternal_generates_correlationId_when_header_absent() throws ServletException, IOException {
+        when(request.getHeader(TracingFilter.CORRELATION_ID_KEY)).thenReturn(null);
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(response).setHeader(eq(TracingFilter.CORRELATION_ID_KEY), anyString());
+        verify(filterChain).doFilter(request, response);
     }
 }
