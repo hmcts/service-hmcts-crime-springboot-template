@@ -33,3 +33,5 @@ applicationinsights-agent-*.jar
 
 .DS_Store
 */.DS_Store
+
+.claude
