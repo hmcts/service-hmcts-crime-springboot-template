@@ -1,52 +1,49 @@
 package uk.gov.hmcts.cp.filters.tracing;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.owasp.encoder.Encode;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class TracingFilter extends OncePerRequestFilter {
 
-    public static final String TRACE_ID = "traceId";
-    public static final String SPAN_ID = "spanId";
-    public static final String APPLICATION_NAME = "applicationName";
+    public static final String CORRELATION_ID_KEY = "X-Correlation-Id";
 
-    private final String applicationName;
-
-    public TracingFilter(@Value("${spring.application.name}") final String applicationName) {
-        this.applicationName = applicationName;
+    @Override
+    protected boolean shouldNotFilter(@Nonnull final HttpServletRequest request) {
+        return false;
     }
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@Nonnull final HttpServletRequest request,
+                                    @Nonnull final HttpServletResponse response,
+                                    @Nonnull final FilterChain filterChain) throws ServletException, IOException {
         try {
-            populateMDC(request, response, filterChain);
+            final String correlationId = getCorrelationId(request);
+            MDC.put(CORRELATION_ID_KEY, getCorrelationId(request));
+            response.setHeader(CORRELATION_ID_KEY, correlationId);
+            filterChain.doFilter(request, response);
         } finally {
-            MDC.clear();
+            MDC.remove(CORRELATION_ID_KEY);
         }
     }
 
-    public void populateMDC(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
-        log.info("TracingFilter for uri:{}", Encode.forJava(request.getRequestURI()));
-        MDC.put(APPLICATION_NAME, applicationName);
-        if (request.getHeader(TRACE_ID) != null) {
-            MDC.put(TRACE_ID, request.getHeader(TRACE_ID));
-            response.setHeader(TRACE_ID, request.getHeader(TRACE_ID));
-        }
-        if (request.getHeader(SPAN_ID) != null) {
-            MDC.put(SPAN_ID, request.getHeader(SPAN_ID));
-            response.setHeader(SPAN_ID, request.getHeader(SPAN_ID));
-        }
-        filterChain.doFilter(request, response);
+    private String getCorrelationId(final HttpServletRequest request) {
+        return request.getHeader(CORRELATION_ID_KEY) == null
+                ? UUID.randomUUID().toString()
+                : request.getHeader(CORRELATION_ID_KEY);
     }
 }
