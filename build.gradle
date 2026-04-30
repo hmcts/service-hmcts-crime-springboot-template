@@ -34,7 +34,7 @@ configurations {
 dependencies {
   // Api spec
   apiSpec "uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2"
-  implementation 'io.swagger.core.v3:swagger-core:2.2.48'
+  implementation 'io.swagger.core.v3:swagger-core:2.2.49'
 
 
   // Java core
