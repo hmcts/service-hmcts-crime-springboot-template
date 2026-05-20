@@ -19,6 +19,23 @@ That’s absolutely fine — but if you do, make sure your approach meets the fo
 * Compliance & Policy Alignment – Services must align with HMCTS/MoJ policies (e.g. Coding in the Open, mandatory security practices).
 * Ownership & Support – Domain teams must clearly own the service, maintain a support model, and define escalation paths.
 
+## Implementation Patterns & Demo Project
+
+This template is intentionally bare-bones. It provides the core Spring Boot scaffold — web, actuator, observability, JWT, logging — but **does not include database or persistence layers by default**.
+
+For ready-to-use implementation guides and working code examples covering common patterns, see the demo project:
+
+> 🔗 **[service-hmcts-springboot-demo](https://github.com/hmcts/service-hmcts-springboot-demo)**
+
+The demo project covers patterns including:
+- **JPA / PostgreSQL** — data access, Flyway migrations, Testcontainers
+- **REST client** — calling downstream services
+- **Caching** — Redis / in-memory
+- **Messaging** — async event handling
+- ...and more
+
+---
+
 ## Documentation
 
 Further documentation can be found in the [docs](docs) directory.
