@@ -1,13 +1,20 @@
 package uk.gov.hmcts.cp.integration;
 
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc
 class ActuatorIntegrationTest extends IntegrationTestBase {
+
+    @Resource
+    MockMvc mockMvc;
 
     @Test
     void actuator_info_should_have_build_fields() throws Exception {

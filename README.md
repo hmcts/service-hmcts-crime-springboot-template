@@ -21,18 +21,72 @@ That’s absolutely fine — but if you do, make sure your approach meets the fo
 
 ## Implementation Patterns & Demo Project
 
-This template is intentionally bare-bones. It provides the core Spring Boot scaffold — web, actuator, observability, JWT, logging — but **does not include database or persistence layers by default**.
+This template is intentionally bare-bones. It provides the core Spring Boot scaffold — web, actuator, observability, JWT, logging — without any domain-specific or infrastructure patterns built in.
 
-For ready-to-use implementation guides and working code examples covering common patterns, see the demo project:
+For ready-to-use implementation guides and working code examples, see the demo project:
 
 > 🔗 **[service-hmcts-springboot-demo](https://github.com/hmcts/service-hmcts-springboot-demo)**
 
-The demo project covers patterns including:
-- **JPA / PostgreSQL** — data access, Flyway migrations, Testcontainers
-- **REST client** — calling downstream services
-- **Caching** — Redis / in-memory
-- **Messaging** — async event handling
-- ...and more
+Each pattern lives in its own branch so you can browse, copy, or cherry-pick exactly what you need:
+
+### Controllers & API
+| Demo | Branch |
+|---|---|
+| REST controller (request/response, validation, error handling) | [`controller-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/controller-demo) |
+| Exception handling | [`exception-handling-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/exception-handling-demo) |
+| API versioning | [`api-versioning-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/api-versioning-demo) |
+| OpenAPI client (calling downstream services) | [`openapi-client-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/openapi-client-demo) |
+| API tests | [`api-test-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/api-test-demo) |
+
+### Database / Persistence
+| Demo | Branch |
+|---|---|
+| JPA + PostgreSQL (Spring Boot 4) | [`postgres-springboot4`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/postgres-springboot4) |
+| Encrypted columns | [`postgres-encrypt-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/postgres-encrypt-demo) |
+| Pessimistic locking | [`postgres-lock`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/postgres-lock) |
+| Flyway Java-based migrations | [`flyway-java-migration-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/flyway-java-migration-demo) |
+
+### Messaging
+| Demo | Branch |
+|---|---|
+| Service Bus queue | [`servicebus-queue-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/servicebus-queue-demo) |
+| Service Bus topic / subscription | [`servicebus-topic-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/servicebus-topic-demo) |
+| Service Bus retry handling | [`servicebus-retry-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/servicebus-retry-demo) |
+
+### Security & Auth
+| Demo | Branch |
+|---|---|
+| JWT auth filter | [`jwt-token-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/jwt-token-demo) |
+| Auth filter | [`auth-filter-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/auth-filter-demo) |
+| Outbound HMAC auth | [`outbound-auth-hmac-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/outbound-auth-hmac-demo) |
+| Entra ID (Azure AD) | [`feature/entra-auth-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/feature/entra-auth-demo) |
+
+### Observability & Monitoring
+| Demo | Branch |
+|---|---|
+| Actuator endpoints | [`actuator-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/actuator-demo) |
+| Azure Monitor integration | [`azure-monitor-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/azure-monitor-demo) |
+| Audit filter | [`audit-filter-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/audit-filter-demo) |
+| Audit filter (Logback) | [`audit-filter-logback-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/audit-filter-logback-demo) |
+
+### Azure
+| Demo | Branch |
+|---|---|
+| Key Vault | [`azure-vault-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/azure-vault-demo) |
+| APIM integration | [`apim-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/apim-demo) |
+| Azurite (local Azure Storage) | [`azure-azureite-storage`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/azure-azureite-storage) |
+
+### Other
+| Demo | Branch |
+|---|---|
+| Clock / time abstraction (testable) | [`clock-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/clock-demo) |
+| JSON mapper patterns | [`json-mapper-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/json-mapper-demo) |
+| Gradle test configuration | [`gradle-test-demo`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/gradle-test-demo) |
+| Misc Java patterns | [`misc-java-demos`](https://github.com/hmcts/service-hmcts-springboot-demo/tree/misc-java-demos) |
+
+### Don't see the pattern you need?
+
+If you've built something useful that isn't covered above — **please add it to the demo project as an exemplar**. A new module or folder per pattern keeps things easy to discover and copy. Raise a PR against [service-hmcts-springboot-demo](https://github.com/hmcts/service-hmcts-springboot-demo) with your working example and a short README explaining the pattern.
 
 ---
 

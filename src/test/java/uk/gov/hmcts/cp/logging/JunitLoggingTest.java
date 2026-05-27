@@ -1,8 +1,8 @@
 package uk.gov.hmcts.cp.logging;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JunitLoggingTest {
 
     @Test
-    void junit_should_log_correct_fields() throws JsonProcessingException {
+    void junit_should_log_correct_fields() throws JacksonException {
         MDC.put("traceId", "1234-1234");
         final ByteArrayOutputStream capturedStdOut = captureStdOut();
         log.info("junit test message");
