@@ -100,7 +100,7 @@ jobs:
           
           echo "Waiting for health endpoint..."
           for i in {1..30}; do
-            if curl -s http://localhost:8082/health > /dev/null; then
+            if curl -s http://localhost:8082/actuator/health > /dev/null; then
               echo "App is healthy"
               break
             fi

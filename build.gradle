@@ -39,7 +39,7 @@ dependencies {
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
 
   // Spring boot core
-  testImplementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
   testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
   testImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'junit', module: 'junit'
