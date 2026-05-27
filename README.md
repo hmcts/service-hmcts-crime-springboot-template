@@ -21,13 +21,13 @@ That’s absolutely fine — but if you do, make sure your approach meets the fo
 
 ## Implementation Patterns & Demo Project
 
-This template is intentionally bare-bones. It provides the core Spring Boot scaffold — web, actuator, observability, JWT, logging — without any domain-specific or infrastructure patterns built in.
+This template is intentionally bare-bones. It provides the core Spring Boot scaffold — actuator, observability, logging — without any domain-specific or infrastructure patterns built in.
 
 For ready-to-use implementation guides and working code examples, see the demo project:
 
 > 🔗 **[service-hmcts-springboot-demo](https://github.com/hmcts/service-hmcts-springboot-demo)**
 
-Each pattern lives in its own branch so you can browse, copy, or cherry-pick exactly what you need:
+Each pattern lives in its own module or folder so you can browse, copy, or cherry-pick exactly what you need:
 
 ### Controllers & API
 | Demo | Branch |
@@ -96,8 +96,6 @@ Further documentation can be found in the [docs](docs) directory.
 
 ### Key Documentation
 - [Spring Boot v4 Upgrade Guide](docs/SpringUpgradev4.md) - Details on the Spring Boot v4 upgrade, tracing test fixes, and code refactoring improvements
-- [Environment Variables Guide](docs/EnvironmentVariables.md) - Complete guide to managing environment variables with `.env` and `.envrc` files
-- [JWT Filter Documentation](docs/JWTFilter.md) - JWT authentication filter configuration and usage
 - [Logging Documentation](docs/Logging.md) - Logging configuration and best practices
 - [Pipeline Documentation](docs/PIPELINE.md) - CI/CD pipeline configuration and deployment processes
 
@@ -123,25 +121,6 @@ gradle build
 
 ### Tests
 - `gradle test` for running unit and integration tests
-- `gradle api` for running api tests
-
-
-### Environment Setup for Local Builds
-
-This project uses a two-file approach for environment variable management with `.env` and `.envrc` files. 
-
-**Quick Setup:**
-1. Install `direnv`: `brew install direnv`
-2. Add to shell: `echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc`
-3. Allow direnv: `direnv allow`
-4. Create `.env` file with your local configuration
-
-**Server Port:** The application uses port `8082` by default. Override with:
-- Environment variable: `export SERVER_PORT=8080`
-- Gradle property: `./gradlew test -Pserver.port=8080`
-- System property: `./gradlew test -Dserver.port=8080`
-
-📖 **For complete setup instructions, troubleshooting, and best practices, see the [Environment Variables Guide](docs/EnvironmentVariables.md).**
 
 ## Static code analysis
 
@@ -168,8 +147,6 @@ gradle pmdTest
 ### Contribute to This Repository
 
 Contributions are welcome! Please see the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file for guidelines.
-
-See also: [JWTFilter documentation](docs/JWTFilter.md)
 
 ## License
 
