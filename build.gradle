@@ -7,7 +7,7 @@ plugins {
   id 'maven-publish'
   id 'com.github.ben-manes.versions' version '0.54.0'
   id 'org.cyclonedx.bom' version '3.2.4'
-  id 'com.gorylenko.gradle-git-properties' version '2.5.7'
+  id 'com.gorylenko.gradle-git-properties' version '3.0.3'
   id 'com.avast.gradle.docker-compose' version '0.17.21'
 }
 
@@ -34,7 +34,7 @@ configurations {
 dependencies {
   // Api spec
   apiSpec "uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.2"
-  implementation 'io.swagger.core.v3:swagger-core:2.2.48'
+  implementation 'io.swagger.core.v3:swagger-core:2.2.50'
 
 
   // Java core
@@ -70,7 +70,7 @@ dependencies {
 
 
   // Api Test
-  apiTestImplementation platform('org.junit:junit-bom:6.0.3')
+  apiTestImplementation platform('org.junit:junit-bom:6.1.0')
   apiTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   apiTestImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'junit', module: 'junit'
