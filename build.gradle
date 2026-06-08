@@ -45,4 +45,8 @@ dependencies {
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+
+  // Security: pin transitive tomcat-embed-core to patched version (CVE-2026-41293, -43512, et al.)
+  // Brought in transitively via spring-boot-starter-web; >=11.0.0-M1,<11.0.22 are vulnerable
+  implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.22'
 }
