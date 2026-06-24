@@ -46,8 +46,7 @@ if [[ -z "$SOURCE" ]]; then
   exit 1
 fi
 
-TEAM_SLUG="api-marketplace"
-TEAM_PERMISSION="maintain"
+TEAMS=("api-marketplace:maintain" "api-marketplace-admin:admin")
 SECRETS_SCANNER_WORKFLOW="secrets-scanner.yml"
 STEPS=6
 
@@ -103,19 +102,25 @@ fi
 # 2. Team ownership
 # ---------------------------------------------------------------------------
 echo
-echo "[ 2/6 ] Adding team '$TEAM_SLUG' with '$TEAM_PERMISSION' access..."
+echo "[ 2/6 ] Adding teams..."
 
-if gh api "repos/$TARGET/teams" --paginate -q '.[].slug' 2>/dev/null | grep -Fxq "$TEAM_SLUG"; then
-  echo "  Skipping — team '$TEAM_SLUG' already has access to $TARGET"
-else
-  if gh api "orgs/hmcts/teams/$TEAM_SLUG/repos/$TARGET" \
-      --method PUT \
-      --field permission="$TEAM_PERMISSION" >/dev/null 2>&1; then
-    echo "  ✓ team '$TEAM_SLUG' granted '$TEAM_PERMISSION' access"
+existing_teams="$(gh api "repos/$TARGET/teams" --paginate -q '.[].slug' 2>/dev/null || true)"
+
+for entry in "${TEAMS[@]}"; do
+  slug="${entry%%:*}"
+  permission="${entry#*:}"
+  if grep -Fxq "$slug" <<<"$existing_teams"; then
+    echo "  Skipping '$slug' — already has access to $TARGET"
   else
-    echo "  ✗ failed — check that '$TEAM_SLUG' exists and you have org admin rights"
+    if gh api "orgs/hmcts/teams/$slug/repos/$TARGET" \
+        --method PUT \
+        --field permission="$permission" >/dev/null 2>&1; then
+      echo "  ✓ '$slug' granted '$permission' access"
+    else
+      echo "  ✗ failed to add '$slug' — check the team exists and you have org admin rights"
+    fi
   fi
-fi
+done
 
 # ---------------------------------------------------------------------------
 # 3. Remove individual direct-access collaborators
