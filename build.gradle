@@ -41,6 +41,14 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
 
+  // BDD / acceptance tests — plain Cucumber on JUnit Platform + Spring (no Serenity)
+  testImplementation platform('io.cucumber:cucumber-bom:7.20.1')
+  testImplementation 'io.cucumber:cucumber-java'
+  testImplementation 'io.cucumber:cucumber-junit-platform-engine'
+  testImplementation 'io.cucumber:cucumber-spring'
+  // Gradle discovers tests by class, so the Cucumber engine needs a @Suite entry point to run
+  testImplementation 'org.junit.platform:junit-platform-suite'
+
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
